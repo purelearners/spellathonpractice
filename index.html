@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced-Spellathon-Practice</title>
+    <title>Advanced Spellathon Practice</title>
     <style>
         * {
             margin: 0;
@@ -456,12 +456,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Basic-Spellathon</h1>
+            <h1>🎯 Advanced Spellathon</h1>
             <p>Master spelling with points and timer for every word</p>
         </div>
 
         <div class="main-content">
-            <!-- Loading Section -->
             <div class="section active" id="loadingSection">
                 <div class="loading">
                     <p>Loading words from Google Sheets...</p>
@@ -469,7 +468,6 @@
                 </div>
             </div>
 
-            <!-- Mode Selection -->
             <div class="section" id="modeSelection">
                 <h2 style="text-align: center; margin-bottom: 30px;">Select Learning Mode</h2>
                 <div class="grid-2">
@@ -484,7 +482,6 @@
                 </div>
             </div>
 
-            <!-- Grade & Subject Selection for Learning -->
             <div class="section" id="gradeSubjectSelection">
                 <h2 style="margin-bottom: 20px;">Select Grade & Subject (Learn Mode)</h2>
 
@@ -504,7 +501,6 @@
                 </div>
             </div>
 
-            <!-- Learning Section -->
             <div class="section" id="learningSection">
                 <div class="progress-bar">
                     <div class="progress-fill" id="learnProgress">0%</div>
@@ -514,25 +510,24 @@
                     <div class="word-main" id="learnWord">Word</div>
                     <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
                     <button class="btn btn-secondary" onclick="speakSyllables()" style="margin: 5px;">🔊 Hear Syllables</button>
-                    <button class="btn btn-stop" onclick="stopSpeaking()">⏹ Stop</button>
+                    <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
 
                     <div class="word-ipa" id="learnIPA">/word/</div>
 
                     <div class="word-synonyms">
-                        <strong>📖 Synonyms:</strong> <span id="learnSynonyms">Similar words here</span>
+                        <strong>Synonyms:</strong> <span id="learnSynonyms">Similar words here</span>
                     </div>
 
                     <button class="btn btn-success" onclick="speakFullWord()" style="margin-top: 10px;">🔊 Hear Word</button>
                 </div>
 
                 <div class="controls">
-                    <button class="btn btn-secondary" onclick="previousLearningWord()">← Previous</button>
-                    <button class="btn btn-primary" onclick="nextLearningWord()">Next →</button>
+                    <button class="btn btn-secondary" onclick="previousLearningWord()">Previous</button>
+                    <button class="btn btn-primary" onclick="nextLearningWord()">Next</button>
                     <button class="btn btn-danger" onclick="exitToMode()">Exit</button>
                 </div>
             </div>
 
-            <!-- Grade & Subject Selection for Practice -->
             <div class="section" id="gradeSubjectSelectionPractice">
                 <h2 style="margin-bottom: 20px;">Select Grade & Subject (Practice Mode)</h2>
 
@@ -552,7 +547,6 @@
                 </div>
             </div>
 
-            <!-- Practice Section -->
             <div class="section" id="practiceSection">
                 <div class="score-display">Score: <span id="scoreValue">0</span> points</div>
                 <div class="timer" id="timer">30</div>
@@ -561,10 +555,10 @@
                 </div>
 
                 <div class="word-display">
-                    <div style="font-size: 1.2em; color: #999; margin-bottom: 15px;">🎧 Listen and spell the word</div>
-                    <button class="btn btn-success" onclick="speakPracticeWord()" style="margin-top: 10px;">🔊 Play Word</button>
-                    <button class="btn btn-secondary" onclick="speakPracticeLetters()" style="margin-left: 10px;">🎵 Play Letters</button>
-                    <button class="btn btn-stop" onclick="stopSpeaking()">⏹ Stop</button>
+                    <div style="font-size: 1.2em; color: #999; margin-bottom: 15px;">Listen and spell the word</div>
+                    <button class="btn btn-success" onclick="speakPracticeWord()" style="margin-top: 10px;">Play Word</button>
+                    <button class="btn btn-secondary" onclick="speakPracticeLetters()" style="margin-left: 10px;">Play Letters</button>
+                    <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
 
                 <div class="selected-letters" id="selectedLetters">_</div>
@@ -572,7 +566,7 @@
                 <div class="letter-buttons" id="letterButtons"></div>
 
                 <div style="text-align: center; margin-top: 15px;">
-                    <button class="btn-backspace" id="backspaceBtn" onclick="backspaceLetters()" disabled>⌫ Backspace</button>
+                    <button class="btn-backspace" id="backspaceBtn" onclick="backspaceLetters()" disabled>Backspace</button>
                 </div>
 
                 <div class="feedback" id="feedback"></div>
@@ -580,7 +574,7 @@
                 <div class="controls" style="margin-top: 20px;">
                     <button class="btn btn-secondary" onclick="clearLetters()">Clear All</button>
                     <button class="btn btn-success" onclick="submitSpelling()">Submit</button>
-                    <button class="btn btn-secondary" onclick="speakPracticeWord()">🔊 Repeat</button>
+                    <button class="btn btn-secondary" onclick="speakPracticeWord()">Repeat</button>
                     <button class="btn btn-secondary" onclick="skipWord()">Skip</button>
                     <button class="btn btn-danger" onclick="exitPractice()">Exit</button>
                 </div>
@@ -589,42 +583,37 @@
     </div>
 
     <script>
-        // ==================== HARDCODED GOOGLE SHEETS URL ====================
         const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
-        // ======================================================================
 
-        // Synonyms database
         const synonymsDB = {
             'beautiful': 'pretty, lovely, attractive, gorgeous',
             'necessary': 'required, essential, needed, vital',
             'receive': 'get, accept, obtain, acquire',
             'separate': 'divide, part, split, isolate',
-            'definitely': 'certainly, surely, absolutely, definitely',
-            'embarrass': 'shame, humiliate, confuse, discomfort',
+            'definitely': 'certainly, surely, absolutely',
+            'embarrass': 'shame, humiliate, confuse',
             'accommodate': 'house, lodge, provide, adapt',
             'rhythm': 'beat, tempo, pattern, pulse',
             'friend': 'mate, companion, buddy, pal',
             'language': 'speech, tongue, dialect, communication',
             'animal': 'creature, beast, organism, living thing',
             'plant': 'vegetation, flora, organism, shrub',
-            'nature': 'environment, world, natural world, outdoors',
+            'nature': 'environment, world, natural world',
             'energy': 'power, strength, vigor, force',
             'ecosystem': 'habitat, environment, biome, community',
-            'photosynthesis': 'light reaction, food making, plant process',
-            'microscope': 'magnifier, lens device, observation tool',
-            'organism': 'creature, being, life form, entity',
-            'habitat': 'home, environment, place, dwelling',
-            'adaptation': 'adjustment, modification, change, evolution'
+            'photosynthesis': 'light reaction, food making',
+            'microscope': 'magnifier, lens device',
+            'organism': 'creature, being, life form',
+            'habitat': 'home, environment, place',
+            'adaptation': 'adjustment, modification, change'
         };
 
-        // Auto-syllabify function
         function syllabify(word) {
             const syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
             const syllables = word.match(syllableRegex) || [word];
             return syllables.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('-');
         }
 
-        // Generate IPA
         function generateIPA(word) {
             const lower = word.toLowerCase();
             let ipa = '/';
@@ -640,15 +629,11 @@
                 else if (char === 'y') ipa += (i === lower.length - 1) ? 'i' : 'j';
                 else if (char === 'c') ipa += (next === 'h') ? '' : (next === 'e' || next === 'i') ? 's' : 'k';
                 else if (char === 'g') ipa += (next === 'h') ? '' : 'ɡ';
-                else if (char === 'h' && i > 0 && (lower[i-1] === 'c' || lower[i-1] === 's' || lower[i-1] === 't')) ipa += '';
                 else if (char === 'p' && next === 'h') ipa += 'f';
                 else if (char === 's' && next === 'h') ipa += 'ʃ';
                 else if (char === 't' && next === 'h') ipa += 'θ';
                 else if (char === 'n' && next === 'g') ipa += 'ŋ';
-                else if (char === 'q') ipa += 'kw';
-                else if (char === 'x') ipa += 'ks';
-                else if (char === 'z') ipa += 'z';
-                else if (' aeiou'.indexOf(char) === -1) ipa += char;
+                else if (char !== ' ' && 'aeiou'.indexOf(char) === -1) ipa += char;
             }
             ipa += '/';
             return ipa;
@@ -664,7 +649,16 @@
             }
         }
 
-        // Load Google Sheets data
+        let allWordsData = {};
+        let currentGrade = '';
+        let currentSubject = '';
+        let currentIndex = 0;
+        let currentLetters = [];
+        let score = 0;
+        let wordTimer = null;
+        let timeLeft = 30;
+        let isAutoAdvancing = false;
+
         async function initializeApp() {
             try {
                 const response = await fetch(GOOGLE_SHEETS_CSV_URL);
@@ -702,20 +696,7 @@
                     }
                 }
             }
-            console.log('Loaded data:', allWordsData);
         }
-
-        // Main data structure
-        let allWordsData = {};
-        let currentGrade = '';
-        let currentSubject = '';
-        let currentIndex = 0;
-        let currentLetters = [];
-        let practiceStats = { correct: 0, total: 0 };
-        let score = 0;
-        let wordTimer = null;
-        let timeLeft = 30;
-        let isAutoAdvancing = false;
 
         function startLearningMode() {
             currentGrade = '';
@@ -731,7 +712,6 @@
             currentSubject = '';
             currentIndex = 0;
             score = 0;
-            practiceStats = { correct: 0, total: 0 };
             document.getElementById('modeSelection').classList.remove('active');
             document.getElementById('gradeSubjectSelectionPractice').classList.add('active');
             renderGradeButtons('gradeButtonsPractice', 'selectGradePractice');
@@ -744,7 +724,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'selector-btn';
                 btn.textContent = grade;
-                btn.onclick = () => {
+                btn.onclick = function() {
                     if (functionName === 'selectGradeLearning') selectGradeLearning(grade);
                     else selectGradePractice(grade);
                 };
@@ -755,7 +735,8 @@
         function selectGradeLearning(grade) {
             currentGrade = grade;
             document.querySelectorAll('#gradeButtons .selector-btn').forEach(btn => {
-                btn.classList.toggle('selected', btn.textContent === grade);
+                if (btn.textContent === grade) btn.classList.add('selected');
+                else btn.classList.remove('selected');
             });
             renderSubjectButtons('subjectButtons', 'selectSubjectLearning');
         }
@@ -763,7 +744,8 @@
         function selectGradePractice(grade) {
             currentGrade = grade;
             document.querySelectorAll('#gradeButtonsPractice .selector-btn').forEach(btn => {
-                btn.classList.toggle('selected', btn.textContent === grade);
+                if (btn.textContent === grade) btn.classList.add('selected');
+                else btn.classList.remove('selected');
             });
             renderSubjectButtons('subjectButtonsPractice', 'selectSubjectPractice');
         }
@@ -775,7 +757,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'selector-btn';
                 btn.textContent = subject;
-                btn.onclick = () => {
+                btn.onclick = function() {
                     if (functionName === 'selectSubjectLearning') selectSubjectLearning(subject);
                     else selectSubjectPractice(subject);
                 };
@@ -786,14 +768,16 @@
         function selectSubjectLearning(subject) {
             currentSubject = subject;
             document.querySelectorAll('#subjectButtons .selector-btn').forEach(btn => {
-                btn.classList.toggle('selected', btn.textContent === subject);
+                if (btn.textContent === subject) btn.classList.add('selected');
+                else btn.classList.remove('selected');
             });
         }
 
         function selectSubjectPractice(subject) {
             currentSubject = subject;
             document.querySelectorAll('#subjectButtonsPractice .selector-btn').forEach(btn => {
-                btn.classList.toggle('selected', btn.textContent === subject);
+                if (btn.textContent === subject) btn.classList.add('selected');
+                else btn.classList.remove('selected');
             });
         }
 
@@ -815,7 +799,6 @@
             }
             currentIndex = 0;
             score = 0;
-            practiceStats = { correct: 0, total: 0 };
             document.getElementById('gradeSubjectSelectionPractice').classList.remove('active');
             document.getElementById('practiceSection').classList.add('active');
             updateScore();
@@ -827,7 +810,7 @@
         function displayLearningWord() {
             const words = allWordsData[currentGrade][currentSubject];
             if (currentIndex >= words.length) {
-                alert('Completed all words! 🎉');
+                alert('Completed all words! Congratulations!');
                 return;
             }
 
@@ -877,8 +860,8 @@
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const syllables = syllabify(word).split('-');
             let delay = 0;
-            syllables.forEach((syl) => {
-                setTimeout(() => {
+            syllables.forEach(function(syl) {
+                setTimeout(function() {
                     const utterance = new SpeechSynthesisUtterance(syl);
                     utterance.rate = 0.7;
                     speechSynthesis.speak(utterance);
@@ -900,8 +883,8 @@
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const letters = word.split('');
             let delay = 0;
-            letters.forEach((letter) => {
-                setTimeout(() => {
+            letters.forEach(function(letter) {
+                setTimeout(function() {
                     const utterance = new SpeechSynthesisUtterance(letter);
                     utterance.rate = 0.7;
                     speechSynthesis.speak(utterance);
@@ -913,13 +896,13 @@
         function startWordTimer() {
             timeLeft = 30;
             if (wordTimer) clearInterval(wordTimer);
-            wordTimer = setInterval(() => {
+            wordTimer = setInterval(function() {
                 timeLeft--;
                 document.getElementById('timer').textContent = timeLeft;
 
                 if (timeLeft <= 0) {
                     clearInterval(wordTimer);
-                    moveToNextWord(); // Time's up, move to next
+                    moveToNextWord();
                 }
             }, 1000);
         }
@@ -931,12 +914,14 @@
 
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-            alphabet.forEach((letter) => {
+            alphabet.forEach(function(letter) {
                 const btn = document.createElement('button');
                 btn.className = 'btn-letter';
                 btn.textContent = letter;
                 btn.id = 'letter-' + letter;
-                btn.onclick = () => selectLetter(letter, btn);
+                btn.onclick = function() {
+                    selectLetter(letter, btn);
+                };
                 container.appendChild(btn);
             });
 
@@ -980,17 +965,17 @@
             const correct = allWordsData[currentGrade][currentSubject][currentIndex];
 
             if (typed.toLowerCase() === correct.toLowerCase()) {
-                document.getElementById('feedback').textContent = '✓ Correct! +1 Point';
+                document.getElementById('feedback').textContent = 'Correct! +1 Point';
                 document.getElementById('feedback').className = 'feedback correct';
                 score++;
                 updateScore();
                 isAutoAdvancing = true;
-                setTimeout(() => {
+                setTimeout(function() {
                     isAutoAdvancing = false;
                     moveToNextWord();
                 }, 1200);
             } else {
-                document.getElementById('feedback').textContent = '✗ Wrong! The word was: ' + correct;
+                document.getElementById('feedback').textContent = 'Wrong! The word was: ' + correct;
                 document.getElementById('feedback').className = 'feedback incorrect';
             }
         }
@@ -1000,13 +985,14 @@
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             document.getElementById('feedback').textContent = 'Skipped. The word was: ' + word;
             document.getElementById('feedback').className = 'feedback incorrect';
-            setTimeout(() => moveToNextWord(), 2000);
+            setTimeout(function() {
+                moveToNextWord();
+            }, 2000);
         }
 
         function moveToNextWord() {
             stopSpeaking();
             currentIndex++;
-            practiceStats.total++;
             const words = allWordsData[currentGrade][currentSubject];
 
             if (currentIndex >= words.length) {
@@ -1034,7 +1020,7 @@
         function endPractice() {
             clearInterval(wordTimer);
             stopSpeaking();
-            alert('Practice Complete!\nFinal Score: ' + score + ' points\nOut of ' + practiceStats.total + ' words');
+            alert('Practice Complete! Final Score: ' + score + ' points');
             exitPractice();
         }
 
