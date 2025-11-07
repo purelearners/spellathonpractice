@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spellathon Practice App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .setup-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .mode-card {
+            padding: 30px;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .mode-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .mode-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .learning-section, .practice-section {
+            display: none;
+        }
+
+        .learning-section.active, .practice-section.active {
+            display: block;
+        }
+
+        .mode-selection.hidden {
+            display: none;
+        }
+
+        .setup-section.hidden {
+            display: none;
+        }
+
+        .word-display {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .word-main {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .word-syllables {
+            font-size: 2em;
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .word-pronunciation {
+            font-size: 1.5em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .practice-input {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .practice-input input {
+            width: 100%;
+            font-size: 1.5em;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .feedback.correct {
+            color: #10b981;
+        }
+
+        .feedback.incorrect {
+            color: #ef4444;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .info-box {
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .word-main {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Spellathon Practice</h1>
+            <p>Master your spelling skills with interactive learning and practice</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Setup Section -->
+            <div class="setup-section" id="setupSection">
+                <div class="info-box">
+                    <strong>📋 How to set up:</strong> Enter your Google Sheets URL. The sheet should have columns: 
+                    <strong>Word</strong>, <strong>Syllables</strong>, and <strong>Pronunciation</strong>
+                </div>
+
+                <div class="input-group">
+                    <label for="sheetUrl">Google Sheets URL (Published as CSV)</label>
+                    <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv">
+                </div>
+
+                <div class="input-group">
+                    <label>Or use sample data for demo:</label>
+                    <button class="btn btn-secondary" onclick="loadSampleData()">Load Sample Words</button>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="loadGoogleSheet()">Load Words from Sheet</button>
+                </div>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="mode-selection hidden" id="modeSelection">
+                <div class="mode-card" onclick="startLearningMode()">
+                    <h3>📚 Learn</h3>
+                    <p>Study words with syllabification and pronunciation. Hear each word and learn its spelling.</p>
+                </div>
+                <div class="mode-card" onclick="startPracticeMode()">
+                    <h3>✍️ Practice</h3>
+                    <p>Test your spelling skills! Listen to words and type them correctly.</p>
+                </div>
+            </div>
+
+            <!-- Learning Section -->
+            <div class="learning-section" id="learningSection">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="learnProgress">0%</div>
+                </div>
+
+                <div class="word-display">
+                    <div class="word-main" id="learnWord">Welcome</div>
+                    <div class="word-syllables" id="learnSyllables">Wel-come</div>
+                    <div class="word-pronunciation" id="learnPronunciation">/ˈwelkəm/</div>
+                    <button class="btn btn-success" onclick="speakWord()">🔊 Hear Word</button>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
+                    <button class="btn btn-primary" onclick="nextWord()">Next →</button>
+                    <button class="btn btn-danger" onclick="backToMenu()">Exit Learning</button>
+                </div>
+            </div>
+
+            <!-- Practice Section -->
+            <div class="practice-section" id="practiceSection">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="practiceProgress">0%</div>
+                </div>
+
+                <div class="word-display">
+                    <div class="word-pronunciation" style="font-size: 1.2em; color: #999;">
+                        🎧 Listen and type the word
+                    </div>
+                    <button class="btn btn-success" onclick="speakCurrentWord()" style="margin-top: 20px;">
+                        🔊 Play Word
+                    </button>
+                </div>
+
+                <div class="practice-input">
+                    <input type="text" id="spellingInput" placeholder="Type the spelling here..." 
+                           onkeyup="handleSpellingInput(event)">
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="correctCount">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="attemptCount">0</div>
+                        <div class="stat-label">Attempts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracyRate">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                </div>
+
+                <div class="controls" style="margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="speakCurrentWord()">🔊 Repeat</button>
+                    <button class="btn btn-secondary" onclick="skipWord()">Skip Word</button>
+                    <button class="btn btn-danger" onclick="backToMenu()">Exit Practice</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let wordsData = [];
+        let currentIndex = 0;
+        let currentMode = '';
+
+        // Practice mode stats
+        let practiceStats = {
+            correct: 0,
+            totalAttempts: 0,
+            currentWordAttempts: 0,
+            currentWordIndex: 0
+        };
+
+        // Sample data for demo
+        function loadSampleData() {
+            wordsData = [
+                { word: 'Beautiful', syllables: 'Beau-ti-ful', pronunciation: '/ˈbjuːtɪfəl/' },
+                { word: 'Necessary', syllables: 'Nec-es-sar-y', pronunciation: '/ˈnesəseri/' },
+                { word: 'Receive', syllables: 'Re-ceive', pronunciation: '/rɪˈsiːv/' },
+                { word: 'Separate', syllables: 'Sep-a-rate', pronunciation: '/ˈsepərət/' },
+                { word: 'Definitely', syllables: 'Def-i-nite-ly', pronunciation: '/ˈdefɪnətli/' },
+                { word: 'Occurrence', syllables: 'Oc-cur-rence', pronunciation: '/əˈkʌrəns/' },
+                { word: 'Accommodate', syllables: 'Ac-com-mo-date', pronunciation: '/əˈkɒmədeɪt/' },
+                { word: 'Rhythm', syllables: 'Rhythm', pronunciation: '/ˈrɪðəm/' },
+                { word: 'Conscience', syllables: 'Con-science', pronunciation: '/ˈkɒnʃəns/' },
+                { word: 'Embarrass', syllables: 'Em-bar-rass', pronunciation: '/ɪmˈbærəs/' }
+            ];
+
+            console.log('Sample data loaded:', wordsData);
+            document.getElementById('setupSection').classList.add('hidden');
+            document.getElementById('modeSelection').classList.remove('hidden');
+        }
+
+        // Load from Google Sheets
+        async function loadGoogleSheet() {
+            const url = document.getElementById('sheetUrl').value.trim();
+
+            if (!url) {
+                alert('Please enter a Google Sheets URL');
+                return;
+            }
+
+            // Convert Google Sheets URL to CSV export URL if needed
+            let csvUrl = url;
+            if (url.includes('/edit')) {
+                csvUrl = url.replace('/edit#gid=', '/export?format=csv&gid=');
+                csvUrl = csvUrl.replace('/edit?usp=sharing', '/export?format=csv');
+                csvUrl = csvUrl.replace('/edit', '/export?format=csv');
+            }
+
+            try {
+                const response = await fetch(csvUrl);
+                const csvText = await response.text();
+                parseCSV(csvText);
+
+                if (wordsData.length > 0) {
+                    document.getElementById('setupSection').classList.add('hidden');
+                    document.getElementById('modeSelection').classList.remove('hidden');
+                } else {
+                    alert('No data found in the sheet. Please check your URL.');
+                }
+            } catch (error) {
+                alert('Error loading data. Make sure the sheet is published and accessible. Error: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            wordsData = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    wordsData.push({
+                        word: parts[0].trim().replace(/^"|"$/g, ''),
+                        syllables: parts[1].trim().replace(/^"|"$/g, ''),
+                        pronunciation: parts[2].trim().replace(/^"|"$/g, '')
+                    });
+                }
+            }
+        }
+
+        function startLearningMode() {
+            currentMode = 'learning';
+            currentIndex = 0;
+            document.getElementById('modeSelection').classList.add('hidden');
+            document.getElementById('learningSection').classList.add('active');
+            displayLearningWord();
+        }
+
+        function startPracticeMode() {
+            currentMode = 'practice';
+            currentIndex = 0;
+            practiceStats = { correct: 0, totalAttempts: 0, currentWordAttempts: 0, currentWordIndex: 0 };
+            document.getElementById('modeSelection').classList.add('hidden');
+            document.getElementById('practiceSection').classList.add('active');
+            updatePracticeStats();
+            updatePracticeProgress();
+            setTimeout(() => speakCurrentWord(), 500);
+        }
+
+        function displayLearningWord() {
+            if (wordsData.length === 0) return;
+
+            const word = wordsData[currentIndex];
+            document.getElementById('learnWord').textContent = word.word;
+            document.getElementById('learnSyllables').textContent = word.syllables;
+            document.getElementById('learnPronunciation').textContent = word.pronunciation;
+
+            const progress = Math.round((currentIndex + 1) / wordsData.length * 100);
+            const progressBar = document.getElementById('learnProgress');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = (currentIndex + 1) + ' / ' + wordsData.length;
+        }
+
+        function nextWord() {
+            if (currentIndex < wordsData.length - 1) {
+                currentIndex++;
+                displayLearningWord();
+            } else {
+                alert('You have completed all words! 🎉');
+            }
+        }
+
+        function previousWord() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayLearningWord();
+            }
+        }
+
+        function speakWord() {
+            if (wordsData.length === 0) return;
+            const utterance = new SpeechSynthesisUtterance(wordsData[currentIndex].word);
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+
+        function speakCurrentWord() {
+            if (wordsData.length === 0 || practiceStats.currentWordIndex >= wordsData.length) return;
+            const utterance = new SpeechSynthesisUtterance(wordsData[practiceStats.currentWordIndex].word);
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+
+        function handleSpellingInput(event) {
+            if (event.key === 'Enter') {
+                checkSpelling();
+            }
+        }
+
+        function checkSpelling() {
+            const input = document.getElementById('spellingInput').value.trim();
+            if (input === '') return;
+
+            const correctWord = wordsData[practiceStats.currentWordIndex].word;
+            const feedback = document.getElementById('feedback');
+
+            practiceStats.totalAttempts++;
+            practiceStats.currentWordAttempts++;
+
+            if (input.toLowerCase() === correctWord.toLowerCase()) {
+                feedback.textContent = '✓ Correct! Well done!';
+                feedback.className = 'feedback correct';
+                practiceStats.correct++;
+
+                setTimeout(function() {
+                    moveToNextPracticeWord();
+                }, 1500);
+            } else {
+                if (practiceStats.currentWordAttempts >= 2) {
+                    feedback.textContent = '✗ The correct spelling is: ' + correctWord;
+                    feedback.className = 'feedback incorrect';
+
+                    setTimeout(function() {
+                        moveToNextPracticeWord();
+                    }, 3000);
+                } else {
+                    feedback.textContent = '✗ Try again! (1 more attempt)';
+                    feedback.className = 'feedback incorrect';
+                    document.getElementById('spellingInput').value = '';
+                }
+            }
+
+            updatePracticeStats();
+        }
+
+        function moveToNextPracticeWord() {
+            practiceStats.currentWordIndex++;
+            practiceStats.currentWordAttempts = 0;
+
+            document.getElementById('spellingInput').value = '';
+            document.getElementById('feedback').textContent = '';
+
+            if (practiceStats.currentWordIndex >= wordsData.length) {
+                showPracticeResults();
+            } else {
+                updatePracticeProgress();
+                setTimeout(function() {
+                    speakCurrentWord();
+                }, 500);
+            }
+        }
+
+        function skipWord() {
+            const correctWord = wordsData[practiceStats.currentWordIndex].word;
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = 'Skipped. The word was: ' + correctWord;
+            feedback.className = 'feedback incorrect';
+
+            setTimeout(function() {
+                moveToNextPracticeWord();
+            }, 2000);
+        }
+
+        function updatePracticeStats() {
+            document.getElementById('correctCount').textContent = practiceStats.correct;
+            document.getElementById('attemptCount').textContent = practiceStats.totalAttempts;
+
+            const accuracy = practiceStats.totalAttempts > 0 
+                ? Math.round(practiceStats.correct / (practiceStats.currentWordIndex + 1) * 100)
+                : 0;
+            document.getElementById('accuracyRate').textContent = accuracy + '%';
+        }
+
+        function updatePracticeProgress() {
+            const progress = Math.round(practiceStats.currentWordIndex / wordsData.length * 100);
+            const progressBar = document.getElementById('practiceProgress');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = practiceStats.currentWordIndex + ' / ' + wordsData.length;
+        }
+
+        function showPracticeResults() {
+            const accuracy = Math.round(practiceStats.correct / wordsData.length * 100);
+            const message = 'Practice Complete! 🎉\n\nCorrect: ' + practiceStats.correct + '/' + wordsData.length + '\nAccuracy: ' + accuracy + '%\nTotal Attempts: ' + practiceStats.totalAttempts;
+            alert(message);
+            backToMenu();
+        }
+
+        function backToMenu() {
+            document.getElementById('learningSection').classList.remove('active');
+            document.getElementById('practiceSection').classList.remove('active');
+            document.getElementById('modeSelection').classList.remove('hidden');
+            currentIndex = 0;
+            document.getElementById('spellingInput').value = '';
+            document.getElementById('feedback').textContent = '';
+        }
+    </script>
+</body>
+</html>
