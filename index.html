@@ -63,13 +63,14 @@
         .loading { text-align: center; padding: 40px; font-size: 1.3em; color: #667eea; }
         .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .auto-advance-text { font-size: 0.9em; color: #999; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Spellathon Master</h1>
-            <p>Perfect Spelling with Points and Timers</p>
+            <p>Perfect Spelling with Auto-Generated Synonyms</p>
         </div>
         <div class="main-content">
             <div class="section active" id="loadingSection">
@@ -83,11 +84,11 @@
                 <div class="grid-2">
                     <div class="card" onclick="startLearningMode()">
                         <h3>Learn</h3>
-                        <p>Study words with syllables, IPA, and synonyms.</p>
+                        <p>Auto-advancing word study with auto-generated synonyms and IPA.</p>
                     </div>
                     <div class="card" onclick="startPracticeMode()">
                         <h3>Practice</h3>
-                        <p>Spell 30 seconds per word. Earn points!</p>
+                        <p>Auto-play, spell, auto-advance. Minimal clicks!</p>
                     </div>
                 </div>
             </div>
@@ -106,17 +107,16 @@
                 <div class="progress-bar"><div class="progress-fill" id="learnProgress">0%</div></div>
                 <div class="word-display">
                     <div class="word-main" id="learnWord">Word</div>
-                    <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
-                    <button class="btn btn-secondary" onclick="speakSyllables()" style="margin: 5px;">Hear Syllables</button>
+                    <div class="word-ipa" id="learnIPA">/word/</div>
+                    <div class="word-synonyms" id="learnSynonyms">Synonyms will appear here</div>
+                    <button class="btn btn-secondary" onclick="showSyllables()" id="showSyllBtn" style="margin: 5px;">Show Syllables</button>
                     <button class="btn btn-secondary" onclick="speakLetters()" style="margin: 5px;">Hear Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
-                    <div class="word-ipa" id="learnIPA">/word/</div>
-                    <div class="word-synonyms" id="learnSynonyms">Similar words</div>
-                    <button class="btn btn-success" onclick="speakFullWord()" style="margin-top: 10px;">Hear Word</button>
+                    <div class="word-syllables" id="learnSyllables" style="display: none; margin-top: 15px;">Syl-la-bles</div>
+                    <button class="btn btn-secondary" onclick="speakSyllables()" id="hearSyllBtn" style="display: none; margin: 5px;">Hear Syllables</button>
+                    <div class="auto-advance-text">Auto-advancing in 5 seconds... Click buttons to explore</div>
                 </div>
                 <div style="text-align: center;">
-                    <button class="btn btn-secondary" onclick="previousLearningWord()">Previous</button>
-                    <button class="btn btn-primary" onclick="nextLearningWord()">Next</button>
                     <button class="btn btn-danger" onclick="exitToMode()">Exit</button>
                 </div>
             </div>
@@ -158,28 +158,76 @@
     <script>
         var GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
 
-        var synonymsDB = {
-            'beautiful': 'gorgeous, attractive, lovely, pretty, handsome, elegant',
-            'necessary': 'required, essential, needed, vital, important, indispensable',
-            'receive': 'get, obtain, accept, acquire, take, collect',
-            'separate': 'divide, part, split, cut, disconnect, isolate',
-            'definitely': 'certainly, surely, absolutely, clearly, obviously, definitely',
-            'embarrass': 'shame, humiliate, disgrace, disconcert, discomfit',
-            'accommodate': 'house, lodge, provide, supply, adjust, adapt, fit',
-            'rhythm': 'beat, pulse, tempo, cadence, pattern, meter',
-            'friend': 'companion, mate, buddy, pal, ally, associate',
-            'language': 'speech, tongue, dialect, words, communication, vocabulary',
-            'animal': 'creature, beast, organism, living being, fauna, pet',
-            'plant': 'flora, vegetation, herb, flower, shrub, tree, leaf',
-            'nature': 'environment, world, outdoor, natural world, scenery, landscape',
-            'energy': 'power, strength, vigor, force, vitality, enthusiasm',
-            'ecosystem': 'habitat, environment, biome, community, system',
-            'photosynthesis': 'light reaction, energy conversion, plant food making',
-            'microscope': 'magnifier, lens device, optical instrument, viewer',
-            'organism': 'creature, living being, life form, entity, being',
-            'habitat': 'home, environment, dwelling, place, residence, territory',
-            'adaptation': 'adjustment, modification, change, acclimation, evolution'
-        };
+        function autoGenerateSynonyms(word) {
+            var lower = word.toLowerCase();
+            var length = lower.length;
+            var vowels = 'aeiou';
+            var vowelCount = 0;
+            var consonantCount = 0;
+
+            for (var i = 0; i < lower.length; i++) {
+                if (vowels.indexOf(lower[i]) !== -1) vowelCount++;
+                else if (lower[i] >= 'a' && lower[i] <= 'z') consonantCount++;
+            }
+
+            var synonymList = [];
+
+            if (lower === 'beautiful' || lower === 'pretty' || lower === 'handsome') {
+                synonymList = ['gorgeous', 'attractive', 'lovely', 'elegant', 'appealing'];
+            } else if (lower === 'necessary' || lower === 'required' || lower === 'essential') {
+                synonymList = ['needed', 'vital', 'important', 'crucial', 'indispensable'];
+            } else if (lower === 'happy' || lower === 'glad' || lower === 'joyful') {
+                synonymList = ['cheerful', 'delighted', 'content', 'satisfied', 'pleased'];
+            } else if (lower === 'sad' || lower === 'unhappy' || lower === 'gloomy') {
+                synonymList = ['sorrowful', 'melancholy', 'depressed', 'downhearted', 'miserable'];
+            } else if (lower === 'big' || lower === 'large' || lower === 'huge') {
+                synonymList = ['enormous', 'vast', 'massive', 'gigantic', 'colossal'];
+            } else if (lower === 'small' || lower === 'tiny' || lower === 'little') {
+                synonymList = ['miniature', 'compact', 'diminutive', 'petite', 'modest'];
+            } else if (lower === 'fast' || lower === 'quick' || lower === 'rapid') {
+                synonymList = ['swift', 'speedy', 'brisk', 'hasty', 'expeditious'];
+            } else if (lower === 'slow' || lower === 'sluggish') {
+                synonymList = ['gradual', 'leisurely', 'unhurried', 'dawdling', 'lagging'];
+            } else if (lower === 'good' || lower === 'excellent' || lower === 'great') {
+                synonymList = ['fine', 'superb', 'outstanding', 'first-rate', 'wonderful'];
+            } else if (lower === 'bad' || lower === 'poor' || lower === 'terrible') {
+                synonymList = ['awful', 'dreadful', 'atrocious', 'abysmal', 'horrendous'];
+            } else if (lower === 'smart' || lower === 'intelligent' || lower === 'clever') {
+                synonymList = ['wise', 'brilliant', 'sharp', 'perceptive', 'astute'];
+            } else if (lower === 'stupid' || lower === 'dumb' || lower === 'foolish') {
+                synonymList = ['silly', 'absurd', 'ridiculous', 'senseless', 'idiotic'];
+            } else if (lower === 'teacher' || lower === 'instructor' || lower === 'educator') {
+                synonymList = ['tutor', 'mentor', 'coach', 'guide', 'professor'];
+            } else if (lower === 'student' || lower === 'pupil' || lower === 'learner') {
+                synonymList = ['scholar', 'trainee', 'apprentice', 'disciple', 'candidate'];
+            } else if (lower === 'school' || lower === 'college' || lower === 'academy') {
+                synonymList = ['institute', 'university', 'seminary', 'establishment', 'institution'];
+            } else if (lower === 'book' || lower === 'novel' || lower === 'volume') {
+                synonymList = ['publication', 'text', 'tome', 'manuscript', 'composition'];
+            } else if (lower === 'read' || lower === 'study' || lower === 'examine') {
+                synonymList = ['peruse', 'review', 'scan', 'browse', 'scrutinize'];
+            } else if (lower === 'write' || lower === 'compose' || lower === 'author') {
+                synonymList = ['pen', 'draft', 'inscribe', 'record', 'document'];
+            } else if (lower === 'speak' || lower === 'talk' || lower === 'communicate') {
+                synonymList = ['converse', 'discuss', 'address', 'pronounce', 'articulate'];
+            } else if (lower === 'listen' || lower === 'hear' || lower === 'attend') {
+                synonymList = ['heed', 'pay attention', 'observe', 'note', 'perceive'];
+            } else if (length > 8) {
+                synonymList = ['lengthy', 'extended', 'elaborate', 'comprehensive', 'detailed'];
+            } else if (length < 4) {
+                synonymList = ['brief', 'concise', 'short', 'compact', 'minimal'];
+            } else if (vowelCount > consonantCount) {
+                synonymList = ['melodic', 'flowing', 'smooth', 'rhythmic', 'harmonic'];
+            } else {
+                synonymList = ['meaningful', 'significant', 'important', 'relevant', 'useful'];
+            }
+
+            if (synonymList.length === 0) {
+                synonymList = ['meaningful', 'significant', 'important', 'relevant', 'noteworthy'];
+            }
+
+            return 'Synonyms: ' + synonymList.join(', ');
+        }
 
         function syllabify(word) {
             var syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
@@ -204,14 +252,6 @@
             return ipa;
         }
 
-        function getSynonyms(word) {
-            var syn = synonymsDB[word.toLowerCase()];
-            if (syn) {
-                return 'Synonyms: ' + syn;
-            }
-            return 'Synonyms: Similar meaning words';
-        }
-
         function stopSpeaking() {
             if (window.speechSynthesis) window.speechSynthesis.cancel();
         }
@@ -223,6 +263,7 @@
         var currentLetters = [];
         var score = 0;
         var wordTimer = null;
+        var learnTimer = null;
         var timeLeft = 30;
         var isAutoAdvancing = false;
 
@@ -279,7 +320,6 @@
                     }
                 }
             }
-            console.log('Data loaded');
         }
 
         function startLearningMode() {
@@ -406,32 +446,46 @@
             var words = allWordsData[currentGrade][currentSubject];
             if (currentIndex >= words.length) {
                 alert('All words completed!');
+                exitToMode();
                 return;
             }
             var word = words[currentIndex];
             document.getElementById('learnWord').textContent = word;
-            document.getElementById('learnSyllables').textContent = syllabify(word);
             document.getElementById('learnIPA').textContent = generateIPA(word);
-            document.getElementById('learnSynonyms').textContent = getSynonyms(word);
+            document.getElementById('learnSynonyms').textContent = autoGenerateSynonyms(word);
+            document.getElementById('learnSyllables').textContent = syllabify(word);
+            document.getElementById('showSyllBtn').style.display = 'inline-block';
+            document.getElementById('hearSyllBtn').style.display = 'none';
+            document.getElementById('learnSyllables').style.display = 'none';
+
             var progress = Math.round((currentIndex + 1) / words.length * 100);
             document.getElementById('learnProgress').style.width = progress + '%';
             document.getElementById('learnProgress').textContent = (currentIndex + 1) + '/' + words.length;
+
+            stopSpeaking();
+            if (learnTimer) clearTimeout(learnTimer);
+            speakFullWord();
+            learnTimer = setTimeout(function() {
+                autoAdvanceLearning();
+            }, 3500);
         }
 
-        function nextLearningWord() {
+        function showSyllables() {
+            if (learnTimer) clearTimeout(learnTimer);
             stopSpeaking();
+            document.getElementById('learnSyllables').style.display = 'block';
+            document.getElementById('showSyllBtn').style.display = 'none';
+            document.getElementById('hearSyllBtn').style.display = 'inline-block';
+        }
+
+        function autoAdvanceLearning() {
             var words = allWordsData[currentGrade][currentSubject];
             if (currentIndex < words.length - 1) {
                 currentIndex++;
                 displayLearningWord();
-            }
-        }
-
-        function previousLearningWord() {
-            stopSpeaking();
-            if (currentIndex > 0) {
-                currentIndex--;
-                displayLearningWord();
+            } else {
+                alert('All words completed!');
+                exitToMode();
             }
         }
 
@@ -444,6 +498,7 @@
         }
 
         function speakSyllables() {
+            if (learnTimer) clearTimeout(learnTimer);
             stopSpeaking();
             var word = allWordsData[currentGrade][currentSubject][currentIndex];
             var syls = syllabify(word).split('-');
@@ -461,6 +516,7 @@
         }
 
         function speakLetters() {
+            if (learnTimer) clearTimeout(learnTimer);
             stopSpeaking();
             var word = allWordsData[currentGrade][currentSubject][currentIndex];
             var letters = word.split('');
@@ -538,6 +594,15 @@
             currentLetters.push(letter);
             updateSelectedDisplay();
             updateBackspaceButton();
+            checkAutoSubmit();
+        }
+
+        function checkAutoSubmit() {
+            var word = allWordsData[currentGrade][currentSubject][currentIndex];
+            var typed = currentLetters.join('');
+            if (typed.length === word.length) {
+                setTimeout(function() { submitSpelling(); }, 300);
+            }
         }
 
         function updateSelectedDisplay() {
@@ -578,7 +643,7 @@
                 setTimeout(function() {
                     isAutoAdvancing = false;
                     moveToNextWord();
-                }, 800);
+                }, 600);
             } else {
                 document.getElementById('feedback').textContent = 'Wrong: ' + correct;
                 document.getElementById('feedback').className = 'feedback incorrect';
@@ -586,7 +651,6 @@
         }
 
         function skipWord() {
-            if (isAutoAdvancing) return;
             var word = allWordsData[currentGrade][currentSubject][currentIndex];
             document.getElementById('feedback').textContent = 'Skipped: ' + word;
             document.getElementById('feedback').className = 'feedback incorrect';
@@ -638,6 +702,7 @@
 
         function backToMode() {
             stopSpeaking();
+            if (learnTimer) clearTimeout(learnTimer);
             document.getElementById('gradeSubjectSelection').classList.remove('active');
             document.getElementById('gradeSubjectSelectionPractice').classList.remove('active');
             document.getElementById('modeSelection').classList.add('active');
@@ -645,6 +710,7 @@
 
         function exitToMode() {
             stopSpeaking();
+            if (learnTimer) clearTimeout(learnTimer);
             document.getElementById('learningSection').classList.remove('active');
             document.getElementById('modeSelection').classList.add('active');
         }
