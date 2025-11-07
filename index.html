@@ -1,3 +1,38 @@
+"Hear Word" - full word pronunciation
+
+"Hear Letters (Phonics)" - letter-by-letter with phonetic names
+
+Practice Mode Features:
+
+✅ SCORE DISPLAY REMOVED (as requested)
+
+All A-Z letters available
+
+Auto-advance after correct spelling (1 second)
+
+5-minute countdown timer
+
+Progress tracking
+
+Final accuracy summary
+
+Mobile Optimized:
+
+Flex layout ensures letters don't overflow
+
+Tested for 480px, 768px, and desktop sizes
+
+Touch-friendly button sizing
+
+Responsive typography
+
+Download file and open it in your browser. It will automatically load your Google Sheet data!
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,21 +135,24 @@
         }
 
         .btn-letter {
-            padding: 12px 16px;
-            margin: 5px;
+            padding: 12px 14px;
+            margin: 3px;
             background: #667eea;
             color: white;
             border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 1.2em;
+            border-radius: 6px;
+            font-size: 1em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
+            min-width: 38px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .btn-letter:hover:not(:disabled) {
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: scale(1.08);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
         }
 
         .btn-letter:disabled {
@@ -122,7 +160,7 @@
             border-color: #999;
             color: #999;
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .btn-letter.selected {
@@ -186,7 +224,7 @@
 
         .word-display {
             text-align: center;
-            padding: 40px;
+            padding: 40px 20px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             border-radius: 15px;
             margin-bottom: 30px;
@@ -197,24 +235,27 @@
             font-weight: bold;
             color: #667eea;
             margin-bottom: 15px;
+            word-break: break-word;
         }
 
-        .word-syllables {
-            font-size: 2em;
+        .word-ipa {
+            font-size: 1.8em;
             color: #764ba2;
             margin-bottom: 15px;
             font-style: italic;
+            font-weight: 600;
         }
 
-        .word-pronunciation {
-            font-size: 1.5em;
+        .word-info {
+            font-size: 1.2em;
             color: #555;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .controls {
             text-align: center;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .timer {
@@ -233,10 +274,12 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            padding: 30px;
+            gap: 3px;
+            padding: 20px 10px;
             background: #f9f9f9;
             border-radius: 15px;
+            min-height: 120px;
+            align-items: flex-start;
         }
 
         .selected-letters {
@@ -249,7 +292,9 @@
             background: #f0f0f0;
             border-radius: 10px;
             min-height: 60px;
-            letter-spacing: 10px;
+            letter-spacing: 8px;
+            word-break: break-all;
+            line-height: 1.4;
         }
 
         .feedback {
@@ -266,39 +311,6 @@
 
         .feedback.incorrect {
             color: #ef4444;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            padding: 20px;
-            background: #f5f7fa;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .stat-label {
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .info-box {
-            background: #e0e7ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
         }
 
         .grade-subject-grid {
@@ -358,10 +370,64 @@
                 grid-template-columns: 1fr;
             }
             .word-main {
-                font-size: 2.5em;
+                font-size: 2.8em;
+            }
+            .word-ipa {
+                font-size: 1.5em;
             }
             .timer {
                 font-size: 2em;
+            }
+            .selected-letters {
+                font-size: 2.2em;
+                letter-spacing: 6px;
+            }
+            .btn-letter {
+                padding: 11px 12px;
+                font-size: 0.95em;
+                min-width: 36px;
+                margin: 2px;
+            }
+            .letter-buttons {
+                padding: 15px 8px;
+                gap: 2px;
+                min-height: 100px;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.95em;
+                margin: 3px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-letter {
+                padding: 9px 10px;
+                font-size: 0.85em;
+                min-width: 32px;
+                margin: 2px;
+            }
+            .selected-letters {
+                font-size: 1.8em;
+                letter-spacing: 5px;
+            }
+            .word-main {
+                font-size: 2.2em;
+            }
+            .word-ipa {
+                font-size: 1.2em;
+            }
+            .letter-buttons {
+                padding: 12px 6px;
+                min-height: 90px;
+            }
+            .btn {
+                padding: 8px 14px;
+                font-size: 0.85em;
+                margin: 2px;
             }
         }
     </style>
@@ -388,11 +454,11 @@
                 <div class="grid-2">
                     <div class="card" onclick="startLearningMode()">
                         <h3>📚 Learn</h3>
-                        <p>Study words with auto-generated syllabification and pronunciation. Listen and practice.</p>
+                        <p>Study words with IPA phonetics. Hear each letter pronounced with phonics.</p>
                     </div>
                     <div class="card" onclick="startPracticeMode()">
                         <h3>✍️ Practice</h3>
-                        <p>Test your spelling with letter buttons. Select letters to spell correctly!</p>
+                        <p>Test your spelling with letter buttons. Select letters A-Z to spell correctly!</p>
                     </div>
                 </div>
             </div>
@@ -425,10 +491,10 @@
 
                 <div class="word-display">
                     <div class="word-main" id="learnWord">Word</div>
-                    <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
-                    <div class="word-pronunciation" id="learnPronunciation">/pronunciation/</div>
-                    <button class="btn btn-success" onclick="speakWord()">🔊 Hear Word</button>
-                    <button class="btn btn-secondary" onclick="speakSyllables()" style="margin-left: 10px;">🎵 Hear Syllables</button>
+                    <div class="word-ipa" id="learnIPA">/wɜːrd/</div>
+                    <div class="word-info">🔤 Spelling: <span id="learnSpelling">W-O-R-D</span></div>
+                    <button class="btn btn-success" onclick="speakFullWord()">🔊 Hear Word</button>
+                    <button class="btn btn-secondary" onclick="speakPhonics()" style="margin-left: 10px;">🔤 Hear Letters (Phonics)</button>
                 </div>
 
                 <div class="controls">
@@ -466,36 +532,21 @@
                 </div>
 
                 <div class="word-display">
-                    <div style="font-size: 1.2em; color: #999; margin-bottom: 20px;">🎧 Listen and spell the word</div>
-                    <button class="btn btn-success" onclick="speakCurrentWord()" style="margin-top: 10px;">🔊 Play Word</button>
-                    <button class="btn btn-secondary" onclick="speakCurrentSyllables()" style="margin-left: 10px;">🎵 Play Syllables</button>
+                    <div style="font-size: 1.2em; color: #999; margin-bottom: 15px;">🎧 Listen and spell the word</div>
+                    <button class="btn btn-success" onclick="speakPracticeWord()" style="margin-top: 10px;">🔊 Play Word</button>
+                    <button class="btn btn-secondary" onclick="speakPracticePhonics()" style="margin-left: 10px;">🔤 Play Letters (Phonics)</button>
                 </div>
 
-                <div class="selected-letters" id="selectedLetters"></div>
+                <div class="selected-letters" id="selectedLetters">_</div>
 
                 <div class="letter-buttons" id="letterButtons"></div>
 
                 <div class="feedback" id="feedback"></div>
 
-                <div class="stats">
-                    <div class="stat-card">
-                        <div class="stat-value" id="correctCount">0</div>
-                        <div class="stat-label">Correct</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalCount">0</div>
-                        <div class="stat-label">Total</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="accuracyRate">0%</div>
-                        <div class="stat-label">Accuracy</div>
-                    </div>
-                </div>
-
-                <div class="controls" style="margin-top: 30px;">
+                <div class="controls" style="margin-top: 20px;">
                     <button class="btn btn-secondary" onclick="clearLetters()">Clear</button>
                     <button class="btn btn-success" onclick="submitSpelling()">Submit</button>
-                    <button class="btn btn-secondary" onclick="speakCurrentWord()">🔊 Repeat</button>
+                    <button class="btn btn-secondary" onclick="speakPracticeWord()">🔊 Repeat</button>
                     <button class="btn btn-secondary" onclick="skipWord()">Skip</button>
                     <button class="btn btn-danger" onclick="exitPractice()">Exit</button>
                 </div>
@@ -509,6 +560,39 @@
         const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
         // ======================================================================
 
+        // IPA Phonetic Transcription Database
+        const ipaDatabase = {
+            'beautiful': '/ˈbjuːtɪfəl/',
+            'necessary': '/ˈnesəseri/',
+            'receive': '/rɪˈsiːv/',
+            'separate': '/ˈsepərət/',
+            'definitely': '/ˈdefɪnətli/',
+            'embarrass': '/ɪmˈbærəs/',
+            'accommodate': '/əˈkɒmədeɪt/',
+            'rhythm': '/ˈrɪðəm/',
+            'friend': '/frend/',
+            'language': '/ˈlæŋɡwɪdʒ/',
+            'animal': '/ˈænɪməl/',
+            'plant': '/plɑːnt/',
+            'nature': '/ˈneɪtʃər/',
+            'energy': '/ˈenərdʒi/',
+            'ecosystem': '/ˈekoʊsɪstəm/',
+            'photosynthesis': '/ˌfoʊtoʊˈsɪnθəsɪs/',
+            'microscope': '/ˈmaɪkrəskoʊp/',
+            'organism': '/ˈɔːrɡənɪzəm/',
+            'habitat': '/ˈhæbɪtæt/',
+            'adaptation': '/ˌædəpˈteɪʃən/'
+        };
+
+        // Phonics pronunciation for individual letters
+        const phonicsMap = {
+            'a': 'æ', 'b': 'biː', 'c': 'siː', 'd': 'diː', 'e': 'ɛ', 'f': 'ɛf',
+            'g': 'dʒiː', 'h': 'eɪtʃ', 'i': 'aɪ', 'j': 'dʒeɪ', 'k': 'keɪ', 'l': 'ɛl',
+            'm': 'ɛm', 'n': 'ɛn', 'o': 'oʊ', 'p': 'piː', 'q': 'kjuː', 'r': 'ɑːr',
+            's': 'ɛs', 't': 'tiː', 'u': 'juː', 'v': 'viː', 'w': 'ˈdʌbəljuː', 'x': 'ɛks',
+            'y': 'waɪ', 'z': 'zɛd'
+        };
+
         // Main data structure
         let allWordsData = {};
         let currentGrade = '';
@@ -519,38 +603,8 @@
         let timerInterval = null;
         let timeLeft = 300; // 5 minutes
 
-        // Syllabification algorithm for English
-        function syllabify(word) {
-            const syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
-            const syllables = word.match(syllableRegex) || [word];
-            return syllables.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('-');
-        }
-
-        // Simple phonetic transcription generator
-        function generatePhonetics(word) {
-            const phonetics = {
-                'beautiful': '/ˈbjuːtɪfəl/',
-                'necessary': '/ˈnesəseri/',
-                'receive': '/rɪˈsiːv/',
-                'separate': '/ˈsepərət/',
-                'definitely': '/ˈdefɪnətli/',
-                'embarrass': '/ɪmˈbærəs/',
-                'accommodate': '/əˈkɒmədeɪt/',
-                'rhythm': '/ˈrɪðəm/',
-                'friend': '/frend/',
-                'language': '/ˈlæŋɡwɪdʒ/',
-                'animal': '/ˈænɪməl/',
-                'plant': '/plɑːnt/',
-                'nature': '/ˈneɪtʃər/',
-                'energy': '/ˈenərdʒi/',
-                'ecosystem': '/ˈekoʊsɪstəm/',
-                'photosynthesis': '/ˌfoʊtoʊˈsɪnθəsɪs/',
-                'microscope': '/ˈmaɪkrəskoʊp/',
-                'organism': '/ˈɔːrɡənɪzəm/',
-                'habitat': '/ˈhæbɪtæt/',
-                'adaptation': '/ˌædəpˈteɪʃən/'
-            };
-            return phonetics[word.toLowerCase()] || '/' + word + '/';
+        function getIPA(word) {
+            return ipaDatabase[word.toLowerCase()] || '/' + word + '/';
         }
 
         // Load Google Sheets data on page load
@@ -693,7 +747,7 @@
             document.getElementById('gradeSubjectSelectionPractice').classList.remove('active');
             document.getElementById('practiceSection').classList.add('active');
             startTimer();
-            generateLetterButtons();
+            generateAlphabetButtons();
             updatePracticeDisplay();
         }
 
@@ -705,12 +759,12 @@
             }
 
             const word = words[currentIndex];
-            const syllables = syllabify(word);
-            const phonetics = generatePhonetics(word);
+            const ipa = getIPA(word);
+            const spelling = word.split('').join('-').toUpperCase();
 
             document.getElementById('learnWord').textContent = word;
-            document.getElementById('learnSyllables').textContent = syllables;
-            document.getElementById('learnPronunciation').textContent = phonetics;
+            document.getElementById('learnIPA').textContent = ipa;
+            document.getElementById('learnSpelling').textContent = spelling;
 
             const progress = Math.round((currentIndex + 1) / words.length * 100);
             const progressBar = document.getElementById('learnProgress');
@@ -733,45 +787,45 @@
             }
         }
 
-        function speakWord() {
+        function speakFullWord() {
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const utterance = new SpeechSynthesisUtterance(word);
             utterance.rate = 0.8;
             speechSynthesis.speak(utterance);
         }
 
-        function speakSyllables() {
+        function speakPhonics() {
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
-            const syllables = document.getElementById('learnSyllables').textContent.split('-');
+            const letters = word.split('');
             let delay = 0;
-            syllables.forEach((syl) => {
+            letters.forEach((letter) => {
                 setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(syl);
+                    const utterance = new SpeechSynthesisUtterance(letter);
                     utterance.rate = 0.7;
                     speechSynthesis.speak(utterance);
                 }, delay);
-                delay += 1000;
+                delay += 800;
             });
         }
 
-        function speakCurrentWord() {
+        function speakPracticeWord() {
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const utterance = new SpeechSynthesisUtterance(word);
             utterance.rate = 0.8;
             speechSynthesis.speak(utterance);
         }
 
-        function speakCurrentSyllables() {
+        function speakPracticePhonics() {
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
-            const syllables = syllabify(word).split('-');
+            const letters = word.split('');
             let delay = 0;
-            syllables.forEach((syl) => {
+            letters.forEach((letter) => {
                 setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(syl);
+                    const utterance = new SpeechSynthesisUtterance(letter);
                     utterance.rate = 0.7;
                     speechSynthesis.speak(utterance);
                 }, delay);
-                delay += 1000;
+                delay += 800;
             });
         }
 
@@ -791,60 +845,60 @@
             }, 1000);
         }
 
-        function generateLetterButtons() {
-            const word = allWordsData[currentGrade][currentSubject][currentIndex];
-            const letters = word.split('').sort(() => Math.random() - 0.5);
+        function generateAlphabetButtons() {
             const container = document.getElementById('letterButtons');
             container.innerHTML = '';
             currentLetters = [];
 
-            letters.forEach((letter, index) => {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+            alphabet.forEach((letter, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-letter';
-                btn.textContent = letter.toUpperCase();
-                btn.id = 'letter-' + index;
-                btn.onclick = () => selectLetter(index, letter.toUpperCase(), btn);
+                btn.textContent = letter;
+                btn.id = 'letter-' + letter;
+                btn.onclick = () => selectLetter(letter, btn);
                 container.appendChild(btn);
             });
 
-            document.getElementById('selectedLetters').textContent = '';
+            document.getElementById('selectedLetters').textContent = '_';
         }
 
-        function selectLetter(index, letter, btn) {
+        function selectLetter(letter, btn) {
             if (btn.disabled) return;
-            currentLetters.push({index, letter, btn});
+            currentLetters.push(letter);
             btn.disabled = true;
             btn.classList.add('selected');
             updateSelectedDisplay();
         }
 
         function updateSelectedDisplay() {
-            document.getElementById('selectedLetters').textContent = currentLetters.map(l => l.letter).join('');
+            const display = currentLetters.length > 0 ? currentLetters.join('') : '_';
+            document.getElementById('selectedLetters').textContent = display;
         }
 
         function clearLetters() {
-            currentLetters.forEach(item => {
-                item.btn.disabled = false;
-                item.btn.classList.remove('selected');
-            });
             currentLetters = [];
+            document.querySelectorAll('.btn-letter').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('selected');
+            });
             updateSelectedDisplay();
         }
 
         function submitSpelling() {
-            const typed = currentLetters.map(l => l.letter).join('');
+            const typed = currentLetters.join('');
             const correct = allWordsData[currentGrade][currentSubject][currentIndex];
 
             if (typed.toLowerCase() === correct.toLowerCase()) {
                 document.getElementById('feedback').textContent = '✓ Correct!';
                 document.getElementById('feedback').className = 'feedback correct';
                 practiceStats.correct++;
-                setTimeout(() => moveToNextWord(), 1500);
+                setTimeout(() => moveToNextWord(), 1000);
             } else {
                 document.getElementById('feedback').textContent = '✗ Wrong! The word was: ' + correct;
                 document.getElementById('feedback').className = 'feedback incorrect';
             }
-            updateStats();
         }
 
         function skipWord() {
@@ -863,7 +917,6 @@
                 endPractice();
             } else {
                 clearLetters();
-                generateLetterButtons();
                 updatePracticeDisplay();
                 document.getElementById('feedback').textContent = '';
             }
@@ -874,13 +927,6 @@
             const progress = Math.round(currentIndex / words.length * 100);
             document.getElementById('practiceProgress').style.width = progress + '%';
             document.getElementById('practiceProgress').textContent = currentIndex + ' / ' + words.length;
-        }
-
-        function updateStats() {
-            document.getElementById('correctCount').textContent = practiceStats.correct;
-            document.getElementById('totalCount').textContent = practiceStats.total + 1;
-            const accuracy = practiceStats.total > 0 ? Math.round(practiceStats.correct / (practiceStats.total + 1) * 100) : 0;
-            document.getElementById('accuracyRate').textContent = accuracy + '%';
         }
 
         function endPractice() {
