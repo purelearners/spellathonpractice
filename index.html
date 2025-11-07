@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spellathon Practice App</title>
+    <title>Advanced Spellathon Practice</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -39,47 +39,20 @@
             margin-bottom: 10px;
         }
 
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
         .main-content {
             padding: 40px;
         }
 
-        .setup-section {
-            margin-bottom: 30px;
+        .section {
+            display: none;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
+        .section.active {
             display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-            font-size: 1.1em;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
         }
 
         .btn {
-            padding: 12px 30px;
+            padding: 12px 24px;
             border: none;
             border-radius: 8px;
             font-size: 1.1em;
@@ -126,15 +99,46 @@
             background: #dc2626;
         }
 
-        .mode-selection {
+        .btn-letter {
+            padding: 12px 16px;
+            margin: 5px;
+            background: #667eea;
+            color: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-letter:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-letter:disabled {
+            background: #ddd;
+            border-color: #999;
+            color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-letter.selected {
+            background: #764ba2;
+            border-color: #764ba2;
+        }
+
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
-        .mode-card {
-            padding: 30px;
+        .card {
+            padding: 25px;
             border: 3px solid #ddd;
             border-radius: 15px;
             text-align: center;
@@ -142,37 +146,42 @@
             transition: all 0.3s;
         }
 
-        .mode-card:hover {
+        .card:hover {
             border-color: #667eea;
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
         }
 
-        .mode-card h3 {
+        .card h3 {
             color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-size: 1.5em;
         }
 
-        .mode-card p {
+        .card p {
             color: #666;
             line-height: 1.6;
         }
 
-        .learning-section, .practice-section {
-            display: none;
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
 
-        .learning-section.active, .practice-section.active {
-            display: block;
-        }
-
-        .mode-selection.hidden {
-            display: none;
-        }
-
-        .setup-section.hidden {
-            display: none;
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
         }
 
         .word-display {
@@ -208,39 +217,39 @@
             margin-top: 20px;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #f0f0f0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.5s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .timer {
+            font-size: 2.5em;
+            color: #ef4444;
             font-weight: bold;
-            font-size: 0.9em;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 10px;
+            border: 2px solid #ef4444;
         }
 
-        .practice-input {
-            text-align: center;
+        .letter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
             padding: 30px;
+            background: #f9f9f9;
+            border-radius: 15px;
         }
 
-        .practice-input input {
-            width: 100%;
-            font-size: 1.5em;
+        .selected-letters {
             text-align: center;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            min-height: 60px;
+            letter-spacing: 10px;
         }
 
         .feedback {
@@ -292,15 +301,67 @@
             margin-bottom: 20px;
         }
 
+        .grade-subject-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .selector-btn {
+            padding: 15px 20px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .selector-btn:hover {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+
+        .selector-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
-            .mode-selection {
-                grid-template-columns: 1fr;
-            }
-            .stats {
+            .grid-2 {
                 grid-template-columns: 1fr;
             }
             .word-main {
                 font-size: 2.5em;
+            }
+            .timer {
+                font-size: 2em;
             }
         }
     </style>
@@ -308,84 +369,111 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Spellathon Practice</h1>
-            <p>Master your spelling skills with interactive learning and practice</p>
+            <h1>🎯 Advanced Spellathon</h1>
+            <p>Master spelling with grade-wise and subject-wise word lists</p>
         </div>
 
         <div class="main-content">
-            <!-- Setup Section -->
-            <div class="setup-section" id="setupSection">
-                <div class="info-box">
-                    <strong>📋 How to set up:</strong> Enter your Google Sheets URL. The sheet should have columns: 
-                    <strong>Word</strong>, <strong>Syllables</strong>, and <strong>Pronunciation</strong>
-                </div>
-
-                <div class="input-group">
-                    <label for="sheetUrl">Google Sheets URL (Published as CSV)</label>
-                    <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv">
-                </div>
-
-                <div class="input-group">
-                    <label>Or use sample data for demo:</label>
-                    <button class="btn btn-secondary" onclick="loadSampleData()">Load Sample Words</button>
-                </div>
-
-                <div class="controls">
-                    <button class="btn btn-primary" onclick="loadGoogleSheet()">Load Words from Sheet</button>
+            <!-- Loading Section -->
+            <div class="section active" id="loadingSection">
+                <div class="loading">
+                    <p>Loading words from Google Sheets...</p>
+                    <div class="loading-spinner"></div>
                 </div>
             </div>
 
             <!-- Mode Selection -->
-            <div class="mode-selection hidden" id="modeSelection">
-                <div class="mode-card" onclick="startLearningMode()">
-                    <h3>📚 Learn</h3>
-                    <p>Study words with syllabification and pronunciation. Hear each word and learn its spelling.</p>
+            <div class="section" id="modeSelection">
+                <h2 style="text-align: center; margin-bottom: 30px;">Select Learning Mode</h2>
+                <div class="grid-2">
+                    <div class="card" onclick="startLearningMode()">
+                        <h3>📚 Learn</h3>
+                        <p>Study words with auto-generated syllabification and pronunciation. Listen and practice.</p>
+                    </div>
+                    <div class="card" onclick="startPracticeMode()">
+                        <h3>✍️ Practice</h3>
+                        <p>Test your spelling with letter buttons. Select letters to spell correctly!</p>
+                    </div>
                 </div>
-                <div class="mode-card" onclick="startPracticeMode()">
-                    <h3>✍️ Practice</h3>
-                    <p>Test your spelling skills! Listen to words and type them correctly.</p>
+            </div>
+
+            <!-- Grade & Subject Selection for Learning -->
+            <div class="section" id="gradeSubjectSelection">
+                <h2 style="margin-bottom: 20px;">Select Grade & Subject (Learn Mode)</h2>
+
+                <div>
+                    <h3 style="margin-bottom: 10px;">Grade:</h3>
+                    <div class="grade-subject-grid" id="gradeButtons"></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 10px;">Subject:</h3>
+                    <div class="grade-subject-grid" id="subjectButtons"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="startLearningWithSelection()">Start Learning</button>
+                    <button class="btn btn-danger" onclick="backToMode()">Back</button>
                 </div>
             </div>
 
             <!-- Learning Section -->
-            <div class="learning-section" id="learningSection">
+            <div class="section" id="learningSection">
                 <div class="progress-bar">
                     <div class="progress-fill" id="learnProgress">0%</div>
                 </div>
 
                 <div class="word-display">
-                    <div class="word-main" id="learnWord">Welcome</div>
-                    <div class="word-syllables" id="learnSyllables">Wel-come</div>
-                    <div class="word-pronunciation" id="learnPronunciation">/ˈwelkəm/</div>
+                    <div class="word-main" id="learnWord">Word</div>
+                    <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
+                    <div class="word-pronunciation" id="learnPronunciation">/pronunciation/</div>
                     <button class="btn btn-success" onclick="speakWord()">🔊 Hear Word</button>
+                    <button class="btn btn-secondary" onclick="speakSyllables()" style="margin-left: 10px;">🎵 Hear Syllables</button>
                 </div>
 
                 <div class="controls">
-                    <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
-                    <button class="btn btn-primary" onclick="nextWord()">Next →</button>
-                    <button class="btn btn-danger" onclick="backToMenu()">Exit Learning</button>
+                    <button class="btn btn-secondary" onclick="previousLearningWord()">← Previous</button>
+                    <button class="btn btn-primary" onclick="nextLearningWord()">Next →</button>
+                    <button class="btn btn-danger" onclick="exitToMode()">Exit</button>
+                </div>
+            </div>
+
+            <!-- Grade & Subject Selection for Practice -->
+            <div class="section" id="gradeSubjectSelectionPractice">
+                <h2 style="margin-bottom: 20px;">Select Grade & Subject (Practice Mode)</h2>
+
+                <div>
+                    <h3 style="margin-bottom: 10px;">Grade:</h3>
+                    <div class="grade-subject-grid" id="gradeButtonsPractice"></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 10px;">Subject:</h3>
+                    <div class="grade-subject-grid" id="subjectButtonsPractice"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="startPracticeWithSelection()">Start Practice</button>
+                    <button class="btn btn-danger" onclick="backToMode()">Back</button>
                 </div>
             </div>
 
             <!-- Practice Section -->
-            <div class="practice-section" id="practiceSection">
+            <div class="section" id="practiceSection">
+                <div class="timer" id="timer">5:00</div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="practiceProgress">0%</div>
                 </div>
 
                 <div class="word-display">
-                    <div class="word-pronunciation" style="font-size: 1.2em; color: #999;">
-                        🎧 Listen and type the word
-                    </div>
-                    <button class="btn btn-success" onclick="speakCurrentWord()" style="margin-top: 20px;">
-                        🔊 Play Word
-                    </button>
+                    <div style="font-size: 1.2em; color: #999; margin-bottom: 20px;">🎧 Listen and spell the word</div>
+                    <button class="btn btn-success" onclick="speakCurrentWord()" style="margin-top: 10px;">🔊 Play Word</button>
+                    <button class="btn btn-secondary" onclick="speakCurrentSyllables()" style="margin-left: 10px;">🎵 Play Syllables</button>
                 </div>
 
-                <div class="practice-input">
-                    <input type="text" id="spellingInput" placeholder="Type the spelling here..." 
-                           onkeyup="handleSpellingInput(event)">
-                </div>
+                <div class="selected-letters" id="selectedLetters"></div>
+
+                <div class="letter-buttons" id="letterButtons"></div>
 
                 <div class="feedback" id="feedback"></div>
 
@@ -395,8 +483,8 @@
                         <div class="stat-label">Correct</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value" id="attemptCount">0</div>
-                        <div class="stat-label">Attempts</div>
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-label">Total</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="accuracyRate">0%</div>
@@ -405,84 +493,85 @@
                 </div>
 
                 <div class="controls" style="margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="clearLetters()">Clear</button>
+                    <button class="btn btn-success" onclick="submitSpelling()">Submit</button>
                     <button class="btn btn-secondary" onclick="speakCurrentWord()">🔊 Repeat</button>
-                    <button class="btn btn-secondary" onclick="skipWord()">Skip Word</button>
-                    <button class="btn btn-danger" onclick="backToMenu()">Exit Practice</button>
+                    <button class="btn btn-secondary" onclick="skipWord()">Skip</button>
+                    <button class="btn btn-danger" onclick="exitPractice()">Exit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let wordsData = [];
+        // ==================== HARDCODED GOOGLE SHEETS URL ====================
+        // EDIT THIS URL TO CHANGE DATA SOURCE
+        const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
+        // ======================================================================
+
+        // Main data structure
+        let allWordsData = {};
+        let currentGrade = '';
+        let currentSubject = '';
         let currentIndex = 0;
-        let currentMode = '';
+        let currentLetters = [];
+        let practiceStats = { correct: 0, total: 0 };
+        let timerInterval = null;
+        let timeLeft = 300; // 5 minutes
 
-        // Practice mode stats
-        let practiceStats = {
-            correct: 0,
-            totalAttempts: 0,
-            currentWordAttempts: 0,
-            currentWordIndex: 0
-        };
-
-        // Sample data for demo
-        function loadSampleData() {
-            wordsData = [
-                { word: 'Beautiful', syllables: 'Beau-ti-ful', pronunciation: '/ˈbjuːtɪfəl/' },
-                { word: 'Necessary', syllables: 'Nec-es-sar-y', pronunciation: '/ˈnesəseri/' },
-                { word: 'Receive', syllables: 'Re-ceive', pronunciation: '/rɪˈsiːv/' },
-                { word: 'Separate', syllables: 'Sep-a-rate', pronunciation: '/ˈsepərət/' },
-                { word: 'Definitely', syllables: 'Def-i-nite-ly', pronunciation: '/ˈdefɪnətli/' },
-                { word: 'Occurrence', syllables: 'Oc-cur-rence', pronunciation: '/əˈkʌrəns/' },
-                { word: 'Accommodate', syllables: 'Ac-com-mo-date', pronunciation: '/əˈkɒmədeɪt/' },
-                { word: 'Rhythm', syllables: 'Rhythm', pronunciation: '/ˈrɪðəm/' },
-                { word: 'Conscience', syllables: 'Con-science', pronunciation: '/ˈkɒnʃəns/' },
-                { word: 'Embarrass', syllables: 'Em-bar-rass', pronunciation: '/ɪmˈbærəs/' }
-            ];
-
-            console.log('Sample data loaded:', wordsData);
-            document.getElementById('setupSection').classList.add('hidden');
-            document.getElementById('modeSelection').classList.remove('hidden');
+        // Syllabification algorithm for English
+        function syllabify(word) {
+            const syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
+            const syllables = word.match(syllableRegex) || [word];
+            return syllables.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('-');
         }
 
-        // Load from Google Sheets
-        async function loadGoogleSheet() {
-            const url = document.getElementById('sheetUrl').value.trim();
+        // Simple phonetic transcription generator
+        function generatePhonetics(word) {
+            const phonetics = {
+                'beautiful': '/ˈbjuːtɪfəl/',
+                'necessary': '/ˈnesəseri/',
+                'receive': '/rɪˈsiːv/',
+                'separate': '/ˈsepərət/',
+                'definitely': '/ˈdefɪnətli/',
+                'embarrass': '/ɪmˈbærəs/',
+                'accommodate': '/əˈkɒmədeɪt/',
+                'rhythm': '/ˈrɪðəm/',
+                'friend': '/frend/',
+                'language': '/ˈlæŋɡwɪdʒ/',
+                'animal': '/ˈænɪməl/',
+                'plant': '/plɑːnt/',
+                'nature': '/ˈneɪtʃər/',
+                'energy': '/ˈenərdʒi/',
+                'ecosystem': '/ˈekoʊsɪstəm/',
+                'photosynthesis': '/ˌfoʊtoʊˈsɪnθəsɪs/',
+                'microscope': '/ˈmaɪkrəskoʊp/',
+                'organism': '/ˈɔːrɡənɪzəm/',
+                'habitat': '/ˈhæbɪtæt/',
+                'adaptation': '/ˌædəpˈteɪʃən/'
+            };
+            return phonetics[word.toLowerCase()] || '/' + word + '/';
+        }
 
-            if (!url) {
-                alert('Please enter a Google Sheets URL');
-                return;
-            }
-
-            // Convert Google Sheets URL to CSV export URL if needed
-            let csvUrl = url;
-            if (url.includes('/edit')) {
-                csvUrl = url.replace('/edit#gid=', '/export?format=csv&gid=');
-                csvUrl = csvUrl.replace('/edit?usp=sharing', '/export?format=csv');
-                csvUrl = csvUrl.replace('/edit', '/export?format=csv');
-            }
-
+        // Load Google Sheets data on page load
+        async function initializeApp() {
             try {
-                const response = await fetch(csvUrl);
+                const response = await fetch(GOOGLE_SHEETS_CSV_URL);
                 const csvText = await response.text();
-                parseCSV(csvText);
-
-                if (wordsData.length > 0) {
-                    document.getElementById('setupSection').classList.add('hidden');
-                    document.getElementById('modeSelection').classList.remove('hidden');
-                } else {
-                    alert('No data found in the sheet. Please check your URL.');
-                }
+                parseSheetData(csvText);
+                document.getElementById('loadingSection').classList.remove('active');
+                document.getElementById('modeSelection').classList.add('active');
             } catch (error) {
-                alert('Error loading data. Make sure the sheet is published and accessible. Error: ' + error.message);
-                console.error(error);
+                console.error('Error loading sheets:', error);
+                alert('Error loading data from Google Sheets. Check the URL and ensure the sheet is published as CSV.\nError: ' + error.message);
+                document.getElementById('loadingSection').classList.remove('active');
+                document.getElementById('modeSelection').classList.add('active');
             }
         }
 
-        function parseCSV(csv) {
+        function parseSheetData(csv) {
             const lines = csv.split('\n');
-            wordsData = [];
+            allWordsData = {};
 
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -490,58 +579,154 @@
 
                 const parts = line.split(',');
                 if (parts.length >= 3) {
-                    wordsData.push({
-                        word: parts[0].trim().replace(/^"|"$/g, ''),
-                        syllables: parts[1].trim().replace(/^"|"$/g, ''),
-                        pronunciation: parts[2].trim().replace(/^"|"$/g, '')
-                    });
+                    const grade = parts[0].trim().replace(/^"|"$/g, '').trim();
+                    const subject = parts[1].trim().replace(/^"|"$/g, '').trim();
+                    const word = parts[2].trim().replace(/^"|"$/g, '').trim();
+
+                    if (grade && subject && word) {
+                        if (!allWordsData[grade]) allWordsData[grade] = {};
+                        if (!allWordsData[grade][subject]) allWordsData[grade][subject] = [];
+                        allWordsData[grade][subject].push(word);
+                    }
                 }
             }
+            console.log('Loaded data:', allWordsData);
         }
 
         function startLearningMode() {
-            currentMode = 'learning';
+            currentGrade = '';
+            currentSubject = '';
             currentIndex = 0;
-            document.getElementById('modeSelection').classList.add('hidden');
+            document.getElementById('modeSelection').classList.remove('active');
+            document.getElementById('gradeSubjectSelection').classList.add('active');
+            renderGradeButtons('gradeButtons', 'selectGradeLearning');
+        }
+
+        function startPracticeMode() {
+            currentGrade = '';
+            currentSubject = '';
+            currentIndex = 0;
+            practiceStats = { correct: 0, total: 0 };
+            document.getElementById('modeSelection').classList.remove('active');
+            document.getElementById('gradeSubjectSelectionPractice').classList.add('active');
+            renderGradeButtons('gradeButtonsPractice', 'selectGradePractice');
+        }
+
+        function renderGradeButtons(containerId, functionName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (const grade in allWordsData) {
+                const btn = document.createElement('button');
+                btn.className = 'selector-btn';
+                btn.textContent = grade;
+                btn.onclick = () => {
+                    if (functionName === 'selectGradeLearning') selectGradeLearning(grade);
+                    else selectGradePractice(grade);
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        function selectGradeLearning(grade) {
+            currentGrade = grade;
+            document.querySelectorAll('#gradeButtons .selector-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === grade);
+            });
+            renderSubjectButtons('subjectButtons', 'selectSubjectLearning');
+        }
+
+        function selectGradePractice(grade) {
+            currentGrade = grade;
+            document.querySelectorAll('#gradeButtonsPractice .selector-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === grade);
+            });
+            renderSubjectButtons('subjectButtonsPractice', 'selectSubjectPractice');
+        }
+
+        function renderSubjectButtons(containerId, functionName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (const subject in allWordsData[currentGrade]) {
+                const btn = document.createElement('button');
+                btn.className = 'selector-btn';
+                btn.textContent = subject;
+                btn.onclick = () => {
+                    if (functionName === 'selectSubjectLearning') selectSubjectLearning(subject);
+                    else selectSubjectPractice(subject);
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        function selectSubjectLearning(subject) {
+            currentSubject = subject;
+            document.querySelectorAll('#subjectButtons .selector-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === subject);
+            });
+        }
+
+        function selectSubjectPractice(subject) {
+            currentSubject = subject;
+            document.querySelectorAll('#subjectButtonsPractice .selector-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === subject);
+            });
+        }
+
+        function startLearningWithSelection() {
+            if (!currentGrade || !currentSubject) {
+                alert('Please select Grade and Subject');
+                return;
+            }
+            currentIndex = 0;
+            document.getElementById('gradeSubjectSelection').classList.remove('active');
             document.getElementById('learningSection').classList.add('active');
             displayLearningWord();
         }
 
-        function startPracticeMode() {
-            currentMode = 'practice';
+        function startPracticeWithSelection() {
+            if (!currentGrade || !currentSubject) {
+                alert('Please select Grade and Subject');
+                return;
+            }
             currentIndex = 0;
-            practiceStats = { correct: 0, totalAttempts: 0, currentWordAttempts: 0, currentWordIndex: 0 };
-            document.getElementById('modeSelection').classList.add('hidden');
+            practiceStats = { correct: 0, total: 0 };
+            document.getElementById('gradeSubjectSelectionPractice').classList.remove('active');
             document.getElementById('practiceSection').classList.add('active');
-            updatePracticeStats();
-            updatePracticeProgress();
-            setTimeout(() => speakCurrentWord(), 500);
+            startTimer();
+            generateLetterButtons();
+            updatePracticeDisplay();
         }
 
         function displayLearningWord() {
-            if (wordsData.length === 0) return;
+            const words = allWordsData[currentGrade][currentSubject];
+            if (currentIndex >= words.length) {
+                alert('Completed all words! 🎉');
+                return;
+            }
 
-            const word = wordsData[currentIndex];
-            document.getElementById('learnWord').textContent = word.word;
-            document.getElementById('learnSyllables').textContent = word.syllables;
-            document.getElementById('learnPronunciation').textContent = word.pronunciation;
+            const word = words[currentIndex];
+            const syllables = syllabify(word);
+            const phonetics = generatePhonetics(word);
 
-            const progress = Math.round((currentIndex + 1) / wordsData.length * 100);
+            document.getElementById('learnWord').textContent = word;
+            document.getElementById('learnSyllables').textContent = syllables;
+            document.getElementById('learnPronunciation').textContent = phonetics;
+
+            const progress = Math.round((currentIndex + 1) / words.length * 100);
             const progressBar = document.getElementById('learnProgress');
             progressBar.style.width = progress + '%';
-            progressBar.textContent = (currentIndex + 1) + ' / ' + wordsData.length;
+            progressBar.textContent = (currentIndex + 1) + ' / ' + words.length;
         }
 
-        function nextWord() {
-            if (currentIndex < wordsData.length - 1) {
+        function nextLearningWord() {
+            const words = allWordsData[currentGrade][currentSubject];
+            if (currentIndex < words.length - 1) {
                 currentIndex++;
                 displayLearningWord();
-            } else {
-                alert('You have completed all words! 🎉');
             }
         }
 
-        function previousWord() {
+        function previousLearningWord() {
             if (currentIndex > 0) {
                 currentIndex--;
                 displayLearningWord();
@@ -549,121 +734,181 @@
         }
 
         function speakWord() {
-            if (wordsData.length === 0) return;
-            const utterance = new SpeechSynthesisUtterance(wordsData[currentIndex].word);
+            const word = allWordsData[currentGrade][currentSubject][currentIndex];
+            const utterance = new SpeechSynthesisUtterance(word);
             utterance.rate = 0.8;
             speechSynthesis.speak(utterance);
+        }
+
+        function speakSyllables() {
+            const word = allWordsData[currentGrade][currentSubject][currentIndex];
+            const syllables = document.getElementById('learnSyllables').textContent.split('-');
+            let delay = 0;
+            syllables.forEach((syl) => {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(syl);
+                    utterance.rate = 0.7;
+                    speechSynthesis.speak(utterance);
+                }, delay);
+                delay += 1000;
+            });
         }
 
         function speakCurrentWord() {
-            if (wordsData.length === 0 || practiceStats.currentWordIndex >= wordsData.length) return;
-            const utterance = new SpeechSynthesisUtterance(wordsData[practiceStats.currentWordIndex].word);
+            const word = allWordsData[currentGrade][currentSubject][currentIndex];
+            const utterance = new SpeechSynthesisUtterance(word);
             utterance.rate = 0.8;
             speechSynthesis.speak(utterance);
         }
 
-        function handleSpellingInput(event) {
-            if (event.key === 'Enter') {
-                checkSpelling();
-            }
+        function speakCurrentSyllables() {
+            const word = allWordsData[currentGrade][currentSubject][currentIndex];
+            const syllables = syllabify(word).split('-');
+            let delay = 0;
+            syllables.forEach((syl) => {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(syl);
+                    utterance.rate = 0.7;
+                    speechSynthesis.speak(utterance);
+                }, delay);
+                delay += 1000;
+            });
         }
 
-        function checkSpelling() {
-            const input = document.getElementById('spellingInput').value.trim();
-            if (input === '') return;
+        function startTimer() {
+            timeLeft = 300;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                document.getElementById('timer').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
 
-            const correctWord = wordsData[practiceStats.currentWordIndex].word;
-            const feedback = document.getElementById('feedback');
-
-            practiceStats.totalAttempts++;
-            practiceStats.currentWordAttempts++;
-
-            if (input.toLowerCase() === correctWord.toLowerCase()) {
-                feedback.textContent = '✓ Correct! Well done!';
-                feedback.className = 'feedback correct';
-                practiceStats.correct++;
-
-                setTimeout(function() {
-                    moveToNextPracticeWord();
-                }, 1500);
-            } else {
-                if (practiceStats.currentWordAttempts >= 2) {
-                    feedback.textContent = '✗ The correct spelling is: ' + correctWord;
-                    feedback.className = 'feedback incorrect';
-
-                    setTimeout(function() {
-                        moveToNextPracticeWord();
-                    }, 3000);
-                } else {
-                    feedback.textContent = '✗ Try again! (1 more attempt)';
-                    feedback.className = 'feedback incorrect';
-                    document.getElementById('spellingInput').value = '';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endPractice();
                 }
-            }
-
-            updatePracticeStats();
+            }, 1000);
         }
 
-        function moveToNextPracticeWord() {
-            practiceStats.currentWordIndex++;
-            practiceStats.currentWordAttempts = 0;
+        function generateLetterButtons() {
+            const word = allWordsData[currentGrade][currentSubject][currentIndex];
+            const letters = word.split('').sort(() => Math.random() - 0.5);
+            const container = document.getElementById('letterButtons');
+            container.innerHTML = '';
+            currentLetters = [];
 
-            document.getElementById('spellingInput').value = '';
-            document.getElementById('feedback').textContent = '';
+            letters.forEach((letter, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-letter';
+                btn.textContent = letter.toUpperCase();
+                btn.id = 'letter-' + index;
+                btn.onclick = () => selectLetter(index, letter.toUpperCase(), btn);
+                container.appendChild(btn);
+            });
 
-            if (practiceStats.currentWordIndex >= wordsData.length) {
-                showPracticeResults();
+            document.getElementById('selectedLetters').textContent = '';
+        }
+
+        function selectLetter(index, letter, btn) {
+            if (btn.disabled) return;
+            currentLetters.push({index, letter, btn});
+            btn.disabled = true;
+            btn.classList.add('selected');
+            updateSelectedDisplay();
+        }
+
+        function updateSelectedDisplay() {
+            document.getElementById('selectedLetters').textContent = currentLetters.map(l => l.letter).join('');
+        }
+
+        function clearLetters() {
+            currentLetters.forEach(item => {
+                item.btn.disabled = false;
+                item.btn.classList.remove('selected');
+            });
+            currentLetters = [];
+            updateSelectedDisplay();
+        }
+
+        function submitSpelling() {
+            const typed = currentLetters.map(l => l.letter).join('');
+            const correct = allWordsData[currentGrade][currentSubject][currentIndex];
+
+            if (typed.toLowerCase() === correct.toLowerCase()) {
+                document.getElementById('feedback').textContent = '✓ Correct!';
+                document.getElementById('feedback').className = 'feedback correct';
+                practiceStats.correct++;
+                setTimeout(() => moveToNextWord(), 1500);
             } else {
-                updatePracticeProgress();
-                setTimeout(function() {
-                    speakCurrentWord();
-                }, 500);
+                document.getElementById('feedback').textContent = '✗ Wrong! The word was: ' + correct;
+                document.getElementById('feedback').className = 'feedback incorrect';
             }
+            updateStats();
         }
 
         function skipWord() {
-            const correctWord = wordsData[practiceStats.currentWordIndex].word;
-            const feedback = document.getElementById('feedback');
-            feedback.textContent = 'Skipped. The word was: ' + correctWord;
-            feedback.className = 'feedback incorrect';
-
-            setTimeout(function() {
-                moveToNextPracticeWord();
-            }, 2000);
+            const word = allWordsData[currentGrade][currentSubject][currentIndex];
+            document.getElementById('feedback').textContent = 'Skipped. The word was: ' + word;
+            document.getElementById('feedback').className = 'feedback incorrect';
+            setTimeout(() => moveToNextWord(), 2000);
         }
 
-        function updatePracticeStats() {
-            document.getElementById('correctCount').textContent = practiceStats.correct;
-            document.getElementById('attemptCount').textContent = practiceStats.totalAttempts;
+        function moveToNextWord() {
+            currentIndex++;
+            practiceStats.total++;
+            const words = allWordsData[currentGrade][currentSubject];
 
-            const accuracy = practiceStats.totalAttempts > 0 
-                ? Math.round(practiceStats.correct / (practiceStats.currentWordIndex + 1) * 100)
-                : 0;
+            if (currentIndex >= words.length) {
+                endPractice();
+            } else {
+                clearLetters();
+                generateLetterButtons();
+                updatePracticeDisplay();
+                document.getElementById('feedback').textContent = '';
+            }
+        }
+
+        function updatePracticeDisplay() {
+            const words = allWordsData[currentGrade][currentSubject];
+            const progress = Math.round(currentIndex / words.length * 100);
+            document.getElementById('practiceProgress').style.width = progress + '%';
+            document.getElementById('practiceProgress').textContent = currentIndex + ' / ' + words.length;
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = practiceStats.correct;
+            document.getElementById('totalCount').textContent = practiceStats.total + 1;
+            const accuracy = practiceStats.total > 0 ? Math.round(practiceStats.correct / (practiceStats.total + 1) * 100) : 0;
             document.getElementById('accuracyRate').textContent = accuracy + '%';
         }
 
-        function updatePracticeProgress() {
-            const progress = Math.round(practiceStats.currentWordIndex / wordsData.length * 100);
-            const progressBar = document.getElementById('practiceProgress');
-            progressBar.style.width = progress + '%';
-            progressBar.textContent = practiceStats.currentWordIndex + ' / ' + wordsData.length;
+        function endPractice() {
+            clearInterval(timerInterval);
+            const accuracy = practiceStats.total > 0 ? Math.round(practiceStats.correct / practiceStats.total * 100) : 0;
+            alert('Practice Complete!\nCorrect: ' + practiceStats.correct + '/' + practiceStats.total + '\nAccuracy: ' + accuracy + '%');
+            exitPractice();
         }
 
-        function showPracticeResults() {
-            const accuracy = Math.round(practiceStats.correct / wordsData.length * 100);
-            const message = 'Practice Complete! 🎉\n\nCorrect: ' + practiceStats.correct + '/' + wordsData.length + '\nAccuracy: ' + accuracy + '%\nTotal Attempts: ' + practiceStats.totalAttempts;
-            alert(message);
-            backToMenu();
-        }
-
-        function backToMenu() {
-            document.getElementById('learningSection').classList.remove('active');
+        function exitPractice() {
+            clearInterval(timerInterval);
             document.getElementById('practiceSection').classList.remove('active');
-            document.getElementById('modeSelection').classList.remove('hidden');
-            currentIndex = 0;
-            document.getElementById('spellingInput').value = '';
-            document.getElementById('feedback').textContent = '';
+            document.getElementById('modeSelection').classList.add('active');
         }
+
+        function backToMode() {
+            document.getElementById('gradeSubjectSelection').classList.remove('active');
+            document.getElementById('gradeSubjectSelectionPractice').classList.remove('active');
+            document.getElementById('modeSelection').classList.add('active');
+        }
+
+        function exitToMode() {
+            document.getElementById('learningSection').classList.remove('active');
+            document.getElementById('modeSelection').classList.add('active');
+        }
+
+        // Initialize app on page load
+        window.addEventListener('load', initializeApp);
     </script>
 </body>
 </html>
