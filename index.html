@@ -49,7 +49,7 @@
         .word-main { font-size: 3.5em; font-weight: bold; color: #667eea; margin-bottom: 15px; }
         .word-syllables { font-size: 2em; color: #764ba2; margin-bottom: 10px; font-weight: 600; }
         .word-ipa { font-size: 1.6em; color: #555; margin-bottom: 15px; font-style: italic; }
-        .word-synonyms { font-size: 1.1em; color: #666; margin-bottom: 15px; background: rgba(255,255,255,0.7); padding: 15px; border-radius: 8px; line-height: 1.8; }
+        .word-meaning { font-size: 1.2em; color: #333; margin-bottom: 15px; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 8px; line-height: 1.8; text-align: left; }
         .timer { font-size: 2.5em; color: #ef4444; font-weight: bold; text-align: center; margin-bottom: 20px; padding: 20px; background: #fff3cd; border-radius: 10px; border: 2px solid #ef4444; }
         .score-display { font-size: 1.8em; color: #10b981; font-weight: bold; text-align: center; margin-bottom: 20px; padding: 15px; background: #ecfdf5; border-radius: 10px; border: 2px solid #10b981; }
         .letter-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; padding: 20px 10px; background: #f9f9f9; border-radius: 15px; min-height: 120px; align-items: flex-start; }
@@ -70,7 +70,7 @@
     <div class="container">
         <div class="header">
             <h1>Spellathon Master</h1>
-            <p>Perfect Spelling with Auto-Generated Synonyms</p>
+            <p>Dynamic Meanings with API Integration</p>
         </div>
         <div class="main-content">
             <div class="section active" id="loadingSection">
@@ -84,11 +84,11 @@
                 <div class="grid-2">
                     <div class="card" onclick="startLearningMode()">
                         <h3>Learn</h3>
-                        <p>Auto-advancing word study with auto-generated synonyms and IPA.</p>
+                        <p>Auto word → letters → meaning from Free Dictionary API.</p>
                     </div>
                     <div class="card" onclick="startPracticeMode()">
                         <h3>Practice</h3>
-                        <p>Auto-play, spell, auto-advance. Minimal clicks!</p>
+                        <p>Auto-play, spell, auto-advance with dynamic meanings.</p>
                     </div>
                 </div>
             </div>
@@ -108,15 +108,16 @@
                 <div class="word-display">
                     <div class="word-main" id="learnWord">Word</div>
                     <div class="word-ipa" id="learnIPA">/word/</div>
-                    <div class="word-synonyms" id="learnSynonyms">Synonyms will appear here</div>
+                    <div class="word-meaning" id="learnMeaning">Loading meaning...</div>
                     <button class="btn btn-secondary" onclick="showSyllables()" id="showSyllBtn" style="margin: 5px;">Show Syllables</button>
                     <button class="btn btn-secondary" onclick="speakLetters()" style="margin: 5px;">Hear Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                     <div class="word-syllables" id="learnSyllables" style="display: none; margin-top: 15px;">Syl-la-bles</div>
                     <button class="btn btn-secondary" onclick="speakSyllables()" id="hearSyllBtn" style="display: none; margin: 5px;">Hear Syllables</button>
-                    <div class="auto-advance-text">Auto-advancing in 5 seconds... Click buttons to explore</div>
+                    <div class="auto-advance-text">Sequence: Word → Letters → Meaning → Auto-Next</div>
                 </div>
                 <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="nextLearningWord()" style="margin: 5px;">Next</button>
                     <button class="btn btn-danger" onclick="exitToMode()">Exit</button>
                 </div>
             </div>
@@ -136,6 +137,7 @@
                 <div class="timer" id="timer">30</div>
                 <div class="progress-bar"><div class="progress-fill" id="practiceProgress">0%</div></div>
                 <div class="word-display">
+                    <button class="btn btn-success" onclick="speakPracticeWord()" style="margin: 5px;">Play Word</button>
                     <button class="btn btn-secondary" onclick="speakPracticeLetters()" style="margin: 5px;">Play Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
@@ -158,75 +160,24 @@
     <script>
         var GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
 
-        function autoGenerateSynonyms(word) {
-            var lower = word.toLowerCase();
-            var length = lower.length;
-            var vowels = 'aeiou';
-            var vowelCount = 0;
-            var consonantCount = 0;
-
-            for (var i = 0; i < lower.length; i++) {
-                if (vowels.indexOf(lower[i]) !== -1) vowelCount++;
-                else if (lower[i] >= 'a' && lower[i] <= 'z') consonantCount++;
+        async function getMeaningFromAPI(word) {
+            try {
+                var response = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word.toLowerCase());
+                if (response.ok) {
+                    var data = await response.json();
+                    if (data && data.length > 0) {
+                        var meanings = data[0].meanings;
+                        if (meanings && meanings.length > 0) {
+                            var definition = meanings[0].definitions[0].definition;
+                            return 'Meaning: ' + definition;
+                        }
+                    }
+                }
+                return 'Meaning: Definition not found in API.';
+            } catch (error) {
+                console.error('API Error:', error);
+                return 'Meaning: (API offline - Check internet connection)';
             }
-
-            var synonymList = [];
-
-            if (lower === 'beautiful' || lower === 'pretty' || lower === 'handsome') {
-                synonymList = ['gorgeous', 'attractive', 'lovely', 'elegant', 'appealing'];
-            } else if (lower === 'necessary' || lower === 'required' || lower === 'essential') {
-                synonymList = ['needed', 'vital', 'important', 'crucial', 'indispensable'];
-            } else if (lower === 'happy' || lower === 'glad' || lower === 'joyful') {
-                synonymList = ['cheerful', 'delighted', 'content', 'satisfied', 'pleased'];
-            } else if (lower === 'sad' || lower === 'unhappy' || lower === 'gloomy') {
-                synonymList = ['sorrowful', 'melancholy', 'depressed', 'downhearted', 'miserable'];
-            } else if (lower === 'big' || lower === 'large' || lower === 'huge') {
-                synonymList = ['enormous', 'vast', 'massive', 'gigantic', 'colossal'];
-            } else if (lower === 'small' || lower === 'tiny' || lower === 'little') {
-                synonymList = ['miniature', 'compact', 'diminutive', 'petite', 'modest'];
-            } else if (lower === 'fast' || lower === 'quick' || lower === 'rapid') {
-                synonymList = ['swift', 'speedy', 'brisk', 'hasty', 'expeditious'];
-            } else if (lower === 'slow' || lower === 'sluggish') {
-                synonymList = ['gradual', 'leisurely', 'unhurried', 'dawdling', 'lagging'];
-            } else if (lower === 'good' || lower === 'excellent' || lower === 'great') {
-                synonymList = ['fine', 'superb', 'outstanding', 'first-rate', 'wonderful'];
-            } else if (lower === 'bad' || lower === 'poor' || lower === 'terrible') {
-                synonymList = ['awful', 'dreadful', 'atrocious', 'abysmal', 'horrendous'];
-            } else if (lower === 'smart' || lower === 'intelligent' || lower === 'clever') {
-                synonymList = ['wise', 'brilliant', 'sharp', 'perceptive', 'astute'];
-            } else if (lower === 'stupid' || lower === 'dumb' || lower === 'foolish') {
-                synonymList = ['silly', 'absurd', 'ridiculous', 'senseless', 'idiotic'];
-            } else if (lower === 'teacher' || lower === 'instructor' || lower === 'educator') {
-                synonymList = ['tutor', 'mentor', 'coach', 'guide', 'professor'];
-            } else if (lower === 'student' || lower === 'pupil' || lower === 'learner') {
-                synonymList = ['scholar', 'trainee', 'apprentice', 'disciple', 'candidate'];
-            } else if (lower === 'school' || lower === 'college' || lower === 'academy') {
-                synonymList = ['institute', 'university', 'seminary', 'establishment', 'institution'];
-            } else if (lower === 'book' || lower === 'novel' || lower === 'volume') {
-                synonymList = ['publication', 'text', 'tome', 'manuscript', 'composition'];
-            } else if (lower === 'read' || lower === 'study' || lower === 'examine') {
-                synonymList = ['peruse', 'review', 'scan', 'browse', 'scrutinize'];
-            } else if (lower === 'write' || lower === 'compose' || lower === 'author') {
-                synonymList = ['pen', 'draft', 'inscribe', 'record', 'document'];
-            } else if (lower === 'speak' || lower === 'talk' || lower === 'communicate') {
-                synonymList = ['converse', 'discuss', 'address', 'pronounce', 'articulate'];
-            } else if (lower === 'listen' || lower === 'hear' || lower === 'attend') {
-                synonymList = ['heed', 'pay attention', 'observe', 'note', 'perceive'];
-            } else if (length > 8) {
-                synonymList = ['lengthy', 'extended', 'elaborate', 'comprehensive', 'detailed'];
-            } else if (length < 4) {
-                synonymList = ['brief', 'concise', 'short', 'compact', 'minimal'];
-            } else if (vowelCount > consonantCount) {
-                synonymList = ['melodic', 'flowing', 'smooth', 'rhythmic', 'harmonic'];
-            } else {
-                synonymList = ['meaningful', 'significant', 'important', 'relevant', 'useful'];
-            }
-
-            if (synonymList.length === 0) {
-                synonymList = ['meaningful', 'significant', 'important', 'relevant', 'noteworthy'];
-            }
-
-            return 'Synonyms: ' + synonymList.join(', ');
         }
 
         function syllabify(word) {
@@ -442,7 +393,7 @@
             }, 500);
         }
 
-        function displayLearningWord() {
+        async function displayLearningWord() {
             var words = allWordsData[currentGrade][currentSubject];
             if (currentIndex >= words.length) {
                 alert('All words completed!');
@@ -452,7 +403,7 @@
             var word = words[currentIndex];
             document.getElementById('learnWord').textContent = word;
             document.getElementById('learnIPA').textContent = generateIPA(word);
-            document.getElementById('learnSynonyms').textContent = autoGenerateSynonyms(word);
+            document.getElementById('learnMeaning').textContent = 'Loading meaning...';
             document.getElementById('learnSyllables').textContent = syllabify(word);
             document.getElementById('showSyllBtn').style.display = 'inline-block';
             document.getElementById('hearSyllBtn').style.display = 'none';
@@ -462,12 +413,26 @@
             document.getElementById('learnProgress').style.width = progress + '%';
             document.getElementById('learnProgress').textContent = (currentIndex + 1) + '/' + words.length;
 
+            var meaning = await getMeaningFromAPI(word);
+            document.getElementById('learnMeaning').textContent = meaning;
+
             stopSpeaking();
             if (learnTimer) clearTimeout(learnTimer);
             speakFullWord();
+
             learnTimer = setTimeout(function() {
-                autoAdvanceLearning();
+                speakLetters();
             }, 3500);
+        }
+
+        function nextLearningWord() {
+            if (learnTimer) clearTimeout(learnTimer);
+            stopSpeaking();
+            var words = allWordsData[currentGrade][currentSubject];
+            if (currentIndex < words.length - 1) {
+                currentIndex++;
+                displayLearningWord();
+            }
         }
 
         function showSyllables() {
@@ -476,17 +441,6 @@
             document.getElementById('learnSyllables').style.display = 'block';
             document.getElementById('showSyllBtn').style.display = 'none';
             document.getElementById('hearSyllBtn').style.display = 'inline-block';
-        }
-
-        function autoAdvanceLearning() {
-            var words = allWordsData[currentGrade][currentSubject];
-            if (currentIndex < words.length - 1) {
-                currentIndex++;
-                displayLearningWord();
-            } else {
-                alert('All words completed!');
-                exitToMode();
-            }
         }
 
         function speakFullWord() {
@@ -516,7 +470,6 @@
         }
 
         function speakLetters() {
-            if (learnTimer) clearTimeout(learnTimer);
             stopSpeaking();
             var word = allWordsData[currentGrade][currentSubject][currentIndex];
             var letters = word.split('');
@@ -531,6 +484,11 @@
                 })(letters[i], d);
                 d += 800;
             }
+
+            var totalDelay = letters.length * 800 + 1000;
+            learnTimer = setTimeout(function() {
+                nextLearningWord();
+            }, totalDelay);
         }
 
         function speakPracticeWord() {
