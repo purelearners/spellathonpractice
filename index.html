@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advced Spellathon Practice</title>
+    <title>Advanced Spellathon Practice</title>
     <style>
         * {
             margin: 0;
@@ -115,22 +115,41 @@
             flex-shrink: 0;
         }
 
-        .btn-letter:hover:not(:disabled) {
+        .btn-letter:hover {
             transform: scale(1.08);
             box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-letter:disabled {
-            background: #ddd;
+        .btn-letter.used {
+            background: #ccc;
             border-color: #999;
-            color: #999;
-            cursor: not-allowed;
-            opacity: 0.5;
+            color: #666;
+            cursor: default;
         }
 
-        .btn-letter.selected {
-            background: #764ba2;
-            border-color: #764ba2;
+        .btn-backspace {
+            padding: 12px 18px;
+            margin: 3px;
+            background: #ef4444;
+            color: white;
+            border: 2px solid #ef4444;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-backspace:hover:not(:disabled) {
+            transform: scale(1.08);
+            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-backspace:disabled {
+            background: #ccc;
+            border-color: #999;
+            cursor: not-allowed;
+            opacity: 0.5;
         }
 
         .grid-2 {
@@ -260,6 +279,7 @@
             letter-spacing: 8px;
             word-break: break-all;
             line-height: 1.4;
+            font-family: 'Courier New', monospace;
         }
 
         .feedback {
@@ -419,7 +439,7 @@
                 <div class="grid-2">
                     <div class="card" onclick="startLearningMode()">
                         <h3>📚 Learn</h3>
-                        <p>Study words with IPA phonetics. Hear each letter pronounced with phonics.</p>
+                        <p>Study words with IPA phonetics. Hear each letter with IPA pronunciation.</p>
                     </div>
                     <div class="card" onclick="startPracticeMode()">
                         <h3>✍️ Practice</h3>
@@ -459,7 +479,7 @@
                     <div class="word-ipa" id="learnIPA">/wɜːrd/</div>
                     <div class="word-info">🔤 Spelling: <span id="learnSpelling">W-O-R-D</span></div>
                     <button class="btn btn-success" onclick="speakFullWord()">🔊 Hear Word</button>
-                    <button class="btn btn-secondary" onclick="speakPhonics()" style="margin-left: 10px;">🔤 Hear Letters (Phonics)</button>
+                    <button class="btn btn-secondary" onclick="speakIPALetters()" style="margin-left: 10px;">🎵 Hear IPA</button>
                 </div>
 
                 <div class="controls">
@@ -499,17 +519,21 @@
                 <div class="word-display">
                     <div style="font-size: 1.2em; color: #999; margin-bottom: 15px;">🎧 Listen and spell the word</div>
                     <button class="btn btn-success" onclick="speakPracticeWord()" style="margin-top: 10px;">🔊 Play Word</button>
-                    <button class="btn btn-secondary" onclick="speakPracticePhonics()" style="margin-left: 10px;">🔤 Play Letters (Phonics)</button>
+                    <button class="btn btn-secondary" onclick="speakPracticeIPALetters()" style="margin-left: 10px;">🎵 Hear IPA</button>
                 </div>
 
                 <div class="selected-letters" id="selectedLetters">_</div>
 
                 <div class="letter-buttons" id="letterButtons"></div>
 
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="btn-backspace" id="backspaceBtn" onclick="backspaceLetters()" disabled>⌫ Backspace</button>
+                </div>
+
                 <div class="feedback" id="feedback"></div>
 
                 <div class="controls" style="margin-top: 20px;">
-                    <button class="btn btn-secondary" onclick="clearLetters()">Clear</button>
+                    <button class="btn btn-secondary" onclick="clearLetters()">Clear All</button>
                     <button class="btn btn-success" onclick="submitSpelling()">Submit</button>
                     <button class="btn btn-secondary" onclick="speakPracticeWord()">🔊 Repeat</button>
                     <button class="btn btn-secondary" onclick="skipWord()">Skip</button>
@@ -525,7 +549,7 @@
         const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
         // ======================================================================
 
-        // IPA Phonetic Transcription Database
+        // IPA Phonetic Transcription Database (CORRECTED WITH REAL IPA)
         const ipaDatabase = {
             'beautiful': '/ˈbjuːtɪfəl/',
             'necessary': '/ˈnesəseri/',
@@ -546,12 +570,16 @@
             'microscope': '/ˈmaɪkrəskoʊp/',
             'organism': '/ˈɔːrɡənɪzəm/',
             'habitat': '/ˈhæbɪtæt/',
-            'adaptation': '/ˌædəpˈteɪʃən/'
+            'adaptation': '/ˌædəpˈteɪʃən/',
+            'read': '/riːd/',
+            'write': '/raɪt/',
+            'think': '/θɪŋk/',
+            'learn': '/lɜːrn/'
         };
 
-        // Phonics pronunciation for individual letters
-        const phonicsMap = {
-            'a': 'æ', 'b': 'biː', 'c': 'siː', 'd': 'diː', 'e': 'ɛ', 'f': 'ɛf',
+        // IPA pronunciations for individual letters
+        const ipaLetterPronunciation = {
+            'a': 'eɪ', 'b': 'biː', 'c': 'siː', 'd': 'diː', 'e': 'ɛ', 'f': 'ɛf',
             'g': 'dʒiː', 'h': 'eɪtʃ', 'i': 'aɪ', 'j': 'dʒeɪ', 'k': 'keɪ', 'l': 'ɛl',
             'm': 'ɛm', 'n': 'ɛn', 'o': 'oʊ', 'p': 'piː', 'q': 'kjuː', 'r': 'ɑːr',
             's': 'ɛs', 't': 'tiː', 'u': 'juː', 'v': 'viː', 'w': 'ˈdʌbəljuː', 'x': 'ɛks',
@@ -567,9 +595,10 @@
         let practiceStats = { correct: 0, total: 0 };
         let timerInterval = null;
         let timeLeft = 300; // 5 minutes
+        let letterUsageCount = {}; // Track how many times each letter is used
 
         function getIPA(word) {
-            return ipaDatabase[word.toLowerCase()] || '/' + word + '/';
+            return ipaDatabase[word.toLowerCase()] || '/' + word.toLowerCase() + '/';
         }
 
         // Load Google Sheets data on page load
@@ -759,7 +788,7 @@
             speechSynthesis.speak(utterance);
         }
 
-        function speakPhonics() {
+        function speakIPALetters() {
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const letters = word.split('');
             let delay = 0;
@@ -780,7 +809,7 @@
             speechSynthesis.speak(utterance);
         }
 
-        function speakPracticePhonics() {
+        function speakPracticeIPALetters() {
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const letters = word.split('');
             let delay = 0;
@@ -814,27 +843,29 @@
             const container = document.getElementById('letterButtons');
             container.innerHTML = '';
             currentLetters = [];
+            letterUsageCount = {};
 
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-            alphabet.forEach((letter, index) => {
+            alphabet.forEach((letter) => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-letter';
                 btn.textContent = letter;
                 btn.id = 'letter-' + letter;
                 btn.onclick = () => selectLetter(letter, btn);
                 container.appendChild(btn);
+                letterUsageCount[letter] = 0; // Track usage
             });
 
             document.getElementById('selectedLetters').textContent = '_';
+            document.getElementById('backspaceBtn').disabled = true;
         }
 
         function selectLetter(letter, btn) {
-            if (btn.disabled) return;
             currentLetters.push(letter);
-            btn.disabled = true;
-            btn.classList.add('selected');
+            letterUsageCount[letter]++;
             updateSelectedDisplay();
+            updateBackspaceButton();
         }
 
         function updateSelectedDisplay() {
@@ -842,13 +873,31 @@
             document.getElementById('selectedLetters').textContent = display;
         }
 
+        function backspaceLetters() {
+            if (currentLetters.length > 0) {
+                const lastLetter = currentLetters.pop();
+                letterUsageCount[lastLetter]--;
+
+                // Mark letter as used only if it appears more times in word
+                const word = allWordsData[currentGrade][currentSubject][currentIndex];
+                const letterCount = word.toUpperCase().split(lastLetter).length - 1;
+
+                updateSelectedDisplay();
+                updateBackspaceButton();
+            }
+        }
+
+        function updateBackspaceButton() {
+            document.getElementById('backspaceBtn').disabled = currentLetters.length === 0;
+        }
+
         function clearLetters() {
             currentLetters = [];
-            document.querySelectorAll('.btn-letter').forEach(btn => {
-                btn.disabled = false;
-                btn.classList.remove('selected');
-            });
+            letterUsageCount = {};
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            alphabet.forEach(letter => letterUsageCount[letter] = 0);
             updateSelectedDisplay();
+            updateBackspaceButton();
         }
 
         function submitSpelling() {
@@ -882,6 +931,7 @@
                 endPractice();
             } else {
                 clearLetters();
+                generateAlphabetButtons();
                 updatePracticeDisplay();
                 document.getElementById('feedback').textContent = '';
             }
