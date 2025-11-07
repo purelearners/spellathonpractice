@@ -49,7 +49,7 @@
         .word-main { font-size: 3.5em; font-weight: bold; color: #667eea; margin-bottom: 15px; }
         .word-syllables { font-size: 2em; color: #764ba2; margin-bottom: 10px; font-weight: 600; }
         .word-ipa { font-size: 1.6em; color: #555; margin-bottom: 15px; font-style: italic; }
-        .word-synonyms { font-size: 1.1em; color: #666; margin-bottom: 15px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 8px; }
+        .word-synonyms { font-size: 1.1em; color: #666; margin-bottom: 15px; background: rgba(255,255,255,0.7); padding: 15px; border-radius: 8px; line-height: 1.8; }
         .timer { font-size: 2.5em; color: #ef4444; font-weight: bold; text-align: center; margin-bottom: 20px; padding: 20px; background: #fff3cd; border-radius: 10px; border: 2px solid #ef4444; }
         .score-display { font-size: 1.8em; color: #10b981; font-weight: bold; text-align: center; margin-bottom: 20px; padding: 15px; background: #ecfdf5; border-radius: 10px; border: 2px solid #10b981; }
         .letter-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; padding: 20px 10px; background: #f9f9f9; border-radius: 15px; min-height: 120px; align-items: flex-start; }
@@ -107,10 +107,11 @@
                 <div class="word-display">
                     <div class="word-main" id="learnWord">Word</div>
                     <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
-                    <button class="btn btn-secondary" onclick="speakSyllables()" style="margin: 5px;">Hear</button>
+                    <button class="btn btn-secondary" onclick="speakSyllables()" style="margin: 5px;">Hear Syllables</button>
+                    <button class="btn btn-secondary" onclick="speakLetters()" style="margin: 5px;">Hear Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                     <div class="word-ipa" id="learnIPA">/word/</div>
-                    <div class="word-synonyms"><strong>Synonyms:</strong> <span id="learnSynonyms">Similar words</span></div>
+                    <div class="word-synonyms" id="learnSynonyms">Similar words</div>
                     <button class="btn btn-success" onclick="speakFullWord()" style="margin-top: 10px;">Hear Word</button>
                 </div>
                 <div style="text-align: center;">
@@ -135,8 +136,7 @@
                 <div class="timer" id="timer">30</div>
                 <div class="progress-bar"><div class="progress-fill" id="practiceProgress">0%</div></div>
                 <div class="word-display">
-                    <button class="btn btn-success" onclick="speakPracticeWord()" style="margin-top: 10px;">Play Word</button>
-                    <button class="btn btn-secondary" onclick="speakPracticeLetters()" style="margin-left: 10px;">Play Letters</button>
+                    <button class="btn btn-secondary" onclick="speakPracticeLetters()" style="margin: 5px;">Play Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
                 <div class="selected-letters" id="selectedLetters">_</div>
@@ -159,16 +159,26 @@
         var GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
 
         var synonymsDB = {
-            'beautiful': 'pretty, lovely, attractive',
-            'necessary': 'required, essential, needed',
-            'receive': 'get, accept, obtain',
-            'separate': 'divide, part, split',
-            'definitely': 'certainly, surely, absolutely',
-            'embarrass': 'shame, humiliate, confuse',
-            'accommodate': 'house, lodge, provide',
-            'rhythm': 'beat, tempo, pattern',
-            'friend': 'mate, companion, buddy',
-            'language': 'speech, tongue, dialect'
+            'beautiful': 'gorgeous, attractive, lovely, pretty, handsome, elegant',
+            'necessary': 'required, essential, needed, vital, important, indispensable',
+            'receive': 'get, obtain, accept, acquire, take, collect',
+            'separate': 'divide, part, split, cut, disconnect, isolate',
+            'definitely': 'certainly, surely, absolutely, clearly, obviously, definitely',
+            'embarrass': 'shame, humiliate, disgrace, disconcert, discomfit',
+            'accommodate': 'house, lodge, provide, supply, adjust, adapt, fit',
+            'rhythm': 'beat, pulse, tempo, cadence, pattern, meter',
+            'friend': 'companion, mate, buddy, pal, ally, associate',
+            'language': 'speech, tongue, dialect, words, communication, vocabulary',
+            'animal': 'creature, beast, organism, living being, fauna, pet',
+            'plant': 'flora, vegetation, herb, flower, shrub, tree, leaf',
+            'nature': 'environment, world, outdoor, natural world, scenery, landscape',
+            'energy': 'power, strength, vigor, force, vitality, enthusiasm',
+            'ecosystem': 'habitat, environment, biome, community, system',
+            'photosynthesis': 'light reaction, energy conversion, plant food making',
+            'microscope': 'magnifier, lens device, optical instrument, viewer',
+            'organism': 'creature, living being, life form, entity, being',
+            'habitat': 'home, environment, dwelling, place, residence, territory',
+            'adaptation': 'adjustment, modification, change, acclimation, evolution'
         };
 
         function syllabify(word) {
@@ -195,7 +205,11 @@
         }
 
         function getSynonyms(word) {
-            return synonymsDB[word.toLowerCase()] || 'Similar words';
+            var syn = synonymsDB[word.toLowerCase()];
+            if (syn) {
+                return 'Synonyms: ' + syn;
+            }
+            return 'Synonyms: Similar meaning words';
         }
 
         function stopSpeaking() {
@@ -383,6 +397,9 @@
             generateAlphabetButtons();
             updatePracticeDisplay();
             startWordTimer();
+            setTimeout(function() {
+                speakPracticeWord();
+            }, 500);
         }
 
         function displayLearningWord() {
@@ -439,6 +456,23 @@
                         speechSynthesis.speak(u);
                     }, delay);
                 })(syls[i], d);
+                d += 800;
+            }
+        }
+
+        function speakLetters() {
+            stopSpeaking();
+            var word = allWordsData[currentGrade][currentSubject][currentIndex];
+            var letters = word.split('');
+            var d = 0;
+            for (var i = 0; i < letters.length; i++) {
+                (function(letter, delay) {
+                    setTimeout(function() {
+                        var u = new SpeechSynthesisUtterance(letter);
+                        u.rate = 0.7;
+                        speechSynthesis.speak(u);
+                    }, delay);
+                })(letters[i], d);
                 d += 800;
             }
         }
@@ -539,10 +573,12 @@
                 score++;
                 updateScore();
                 isAutoAdvancing = true;
+                stopSpeaking();
+                clearInterval(wordTimer);
                 setTimeout(function() {
                     isAutoAdvancing = false;
                     moveToNextWord();
-                }, 1200);
+                }, 800);
             } else {
                 document.getElementById('feedback').textContent = 'Wrong: ' + correct;
                 document.getElementById('feedback').className = 'feedback incorrect';
@@ -569,6 +605,9 @@
                 updatePracticeDisplay();
                 document.getElementById('feedback').textContent = '';
                 startWordTimer();
+                setTimeout(function() {
+                    speakPracticeWord();
+                }, 500);
             }
         }
 
