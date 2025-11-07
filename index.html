@@ -107,6 +107,7 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+            border: none;
         }
 
         .btn-stop:hover {
@@ -229,24 +230,34 @@
             word-break: break-word;
         }
 
-        .word-ipa {
-            font-size: 1.8em;
+        .word-syllables {
+            font-size: 2em;
             color: #764ba2;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .word-ipa {
+            font-size: 1.6em;
+            color: #555;
             margin-bottom: 15px;
             font-style: italic;
-            font-weight: 600;
+        }
+
+        .word-synonyms {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 8px;
         }
 
         .word-info {
             font-size: 1.2em;
             color: #555;
             margin-bottom: 15px;
-        }
-
-        .controls {
-            text-align: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
         }
 
         .timer {
@@ -259,6 +270,18 @@
             background: #fff3cd;
             border-radius: 10px;
             border: 2px solid #ef4444;
+        }
+
+        .score-display {
+            font-size: 1.8em;
+            color: #10b981;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #ecfdf5;
+            border-radius: 10px;
+            border: 2px solid #10b981;
         }
 
         .letter-buttons {
@@ -364,8 +387,11 @@
             .word-main {
                 font-size: 2.8em;
             }
+            .word-syllables {
+                font-size: 1.6em;
+            }
             .word-ipa {
-                font-size: 1.5em;
+                font-size: 1.4em;
             }
             .timer {
                 font-size: 2em;
@@ -409,8 +435,11 @@
             .word-main {
                 font-size: 2.2em;
             }
+            .word-syllables {
+                font-size: 1.4em;
+            }
             .word-ipa {
-                font-size: 1.2em;
+                font-size: 1.1em;
             }
             .letter-buttons {
                 padding: 12px 6px;
@@ -428,7 +457,7 @@
     <div class="container">
         <div class="header">
             <h1>🎯 Advanced Spellathon</h1>
-            <p>Master spelling with grade-wise and subject-wise word lists</p>
+            <p>Master spelling with points and timer for every word</p>
         </div>
 
         <div class="main-content">
@@ -446,11 +475,11 @@
                 <div class="grid-2">
                     <div class="card" onclick="startLearningMode()">
                         <h3>📚 Learn</h3>
-                        <p>Study words with IPA phonetics. Hear each letter pronounced clearly.</p>
+                        <p>Study words with syllables, IPA, and synonyms. Hear pronunciation and break-down.</p>
                     </div>
                     <div class="card" onclick="startPracticeMode()">
                         <h3>✍️ Practice</h3>
-                        <p>Test your spelling with letter buttons. Select letters A-Z to spell correctly!</p>
+                        <p>Spell 30 seconds per word. Earn +1 point for each correct spelling!</p>
                     </div>
                 </div>
             </div>
@@ -483,11 +512,17 @@
 
                 <div class="word-display">
                     <div class="word-main" id="learnWord">Word</div>
-                    <div class="word-ipa" id="learnIPA">/wɜːrd/</div>
-                    <div class="word-info">🔤 Spelling: <span id="learnSpelling">W-O-R-D</span></div>
-                    <button class="btn btn-success" onclick="speakFullWord()">🔊 Hear Word</button>
-                    <button class="btn btn-secondary" onclick="speakIPALetters()" style="margin-left: 10px;">🎵 Hear Letters</button>
-                    <button class="btn btn-stop" onclick="stopSpeaking()" style="margin-left: 10px;">⏹ Stop</button>
+                    <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
+                    <button class="btn btn-secondary" onclick="speakSyllables()" style="margin: 5px;">🔊 Hear Syllables</button>
+                    <button class="btn btn-stop" onclick="stopSpeaking()">⏹ Stop</button>
+
+                    <div class="word-ipa" id="learnIPA">/word/</div>
+
+                    <div class="word-synonyms">
+                        <strong>📖 Synonyms:</strong> <span id="learnSynonyms">Similar words here</span>
+                    </div>
+
+                    <button class="btn btn-success" onclick="speakFullWord()" style="margin-top: 10px;">🔊 Hear Word</button>
                 </div>
 
                 <div class="controls">
@@ -519,7 +554,8 @@
 
             <!-- Practice Section -->
             <div class="section" id="practiceSection">
-                <div class="timer" id="timer">5:00</div>
+                <div class="score-display">Score: <span id="scoreValue">0</span> points</div>
+                <div class="timer" id="timer">30</div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="practiceProgress">0%</div>
                 </div>
@@ -527,8 +563,8 @@
                 <div class="word-display">
                     <div style="font-size: 1.2em; color: #999; margin-bottom: 15px;">🎧 Listen and spell the word</div>
                     <button class="btn btn-success" onclick="speakPracticeWord()" style="margin-top: 10px;">🔊 Play Word</button>
-                    <button class="btn btn-secondary" onclick="speakPracticeIPALetters()" style="margin-left: 10px;">🎵 Hear Letters</button>
-                    <button class="btn btn-stop" onclick="stopSpeaking()" style="margin-left: 10px;">⏹ Stop</button>
+                    <button class="btn btn-secondary" onclick="speakPracticeLetters()" style="margin-left: 10px;">🎵 Play Letters</button>
+                    <button class="btn btn-stop" onclick="stopSpeaking()">⏹ Stop</button>
                 </div>
 
                 <div class="selected-letters" id="selectedLetters">_</div>
@@ -552,35 +588,50 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/gh/surrsurus/text-to-ipa@master/text-to-ipa.min.js"></script>
     <script>
         // ==================== HARDCODED GOOGLE SHEETS URL ====================
         const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
         // ======================================================================
 
-        // Main data structure
-        let allWordsData = {};
-        let currentGrade = '';
-        let currentSubject = '';
-        let currentIndex = 0;
-        let currentLetters = [];
-        let practiceStats = { correct: 0, total: 0 };
-        let timerInterval = null;
-        let timeLeft = 300;
-        let isAutoAdvancing = false;
+        // Synonyms database
+        const synonymsDB = {
+            'beautiful': 'pretty, lovely, attractive, gorgeous',
+            'necessary': 'required, essential, needed, vital',
+            'receive': 'get, accept, obtain, acquire',
+            'separate': 'divide, part, split, isolate',
+            'definitely': 'certainly, surely, absolutely, definitely',
+            'embarrass': 'shame, humiliate, confuse, discomfort',
+            'accommodate': 'house, lodge, provide, adapt',
+            'rhythm': 'beat, tempo, pattern, pulse',
+            'friend': 'mate, companion, buddy, pal',
+            'language': 'speech, tongue, dialect, communication',
+            'animal': 'creature, beast, organism, living thing',
+            'plant': 'vegetation, flora, organism, shrub',
+            'nature': 'environment, world, natural world, outdoors',
+            'energy': 'power, strength, vigor, force',
+            'ecosystem': 'habitat, environment, biome, community',
+            'photosynthesis': 'light reaction, food making, plant process',
+            'microscope': 'magnifier, lens device, observation tool',
+            'organism': 'creature, being, life form, entity',
+            'habitat': 'home, environment, place, dwelling',
+            'adaptation': 'adjustment, modification, change, evolution'
+        };
 
-        // Generate IPA from word - using simple phonetic rules as fallback
+        // Auto-syllabify function
+        function syllabify(word) {
+            const syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
+            const syllables = word.match(syllableRegex) || [word];
+            return syllables.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('-');
+        }
+
+        // Generate IPA
         function generateIPA(word) {
-            // Try to use basic IPA conversion
             const lower = word.toLowerCase();
-
-            // Simple IPA mapping for common patterns
             let ipa = '/';
             for (let i = 0; i < lower.length; i++) {
                 const char = lower[i];
                 const next = i < lower.length - 1 ? lower[i + 1] : '';
 
-                // Basic phonetic rules
                 if (char === 'a') ipa += (next === 'i' || next === 'y') ? 'eɪ' : 'æ';
                 else if (char === 'e') ipa += (next === 'e') ? 'iː' : (i === lower.length - 1 ? '' : 'ɛ');
                 else if (char === 'i') ipa += (next === 'e' || i === lower.length - 1) ? 'aɪ' : 'ɪ';
@@ -601,6 +652,10 @@
             }
             ipa += '/';
             return ipa;
+        }
+
+        function getSynonyms(word) {
+            return synonymsDB[word.toLowerCase()] || 'Similar words';
         }
 
         function stopSpeaking() {
@@ -626,7 +681,8 @@
         }
 
         function parseSheetData(csv) {
-            const lines = csv.split('\n');
+            const lines = csv.split('
+');
             allWordsData = {};
 
             for (let i = 1; i < lines.length; i++) {
@@ -649,6 +705,18 @@
             console.log('Loaded data:', allWordsData);
         }
 
+        // Main data structure
+        let allWordsData = {};
+        let currentGrade = '';
+        let currentSubject = '';
+        let currentIndex = 0;
+        let currentLetters = [];
+        let practiceStats = { correct: 0, total: 0 };
+        let score = 0;
+        let wordTimer = null;
+        let timeLeft = 30;
+        let isAutoAdvancing = false;
+
         function startLearningMode() {
             currentGrade = '';
             currentSubject = '';
@@ -662,6 +730,7 @@
             currentGrade = '';
             currentSubject = '';
             currentIndex = 0;
+            score = 0;
             practiceStats = { correct: 0, total: 0 };
             document.getElementById('modeSelection').classList.remove('active');
             document.getElementById('gradeSubjectSelectionPractice').classList.add('active');
@@ -745,12 +814,14 @@
                 return;
             }
             currentIndex = 0;
+            score = 0;
             practiceStats = { correct: 0, total: 0 };
             document.getElementById('gradeSubjectSelectionPractice').classList.remove('active');
             document.getElementById('practiceSection').classList.add('active');
-            startTimer();
+            updateScore();
             generateAlphabetButtons();
             updatePracticeDisplay();
+            startWordTimer();
         }
 
         function displayLearningWord() {
@@ -761,12 +832,14 @@
             }
 
             const word = words[currentIndex];
+            const syllables = syllabify(word);
             const ipa = generateIPA(word);
-            const spelling = word.split('').join('-').toUpperCase();
+            const synonyms = getSynonyms(word);
 
             document.getElementById('learnWord').textContent = word;
+            document.getElementById('learnSyllables').textContent = syllables;
             document.getElementById('learnIPA').textContent = ipa;
-            document.getElementById('learnSpelling').textContent = spelling;
+            document.getElementById('learnSynonyms').textContent = synonyms;
 
             const progress = Math.round((currentIndex + 1) / words.length * 100);
             const progressBar = document.getElementById('learnProgress');
@@ -799,14 +872,14 @@
             speechSynthesis.speak(utterance);
         }
 
-        function speakIPALetters() {
+        function speakSyllables() {
             stopSpeaking();
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
-            const letters = word.split('');
+            const syllables = syllabify(word).split('-');
             let delay = 0;
-            letters.forEach((letter) => {
+            syllables.forEach((syl) => {
                 setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(letter);
+                    const utterance = new SpeechSynthesisUtterance(syl);
                     utterance.rate = 0.7;
                     speechSynthesis.speak(utterance);
                 }, delay);
@@ -822,7 +895,7 @@
             speechSynthesis.speak(utterance);
         }
 
-        function speakPracticeIPALetters() {
+        function speakPracticeLetters() {
             stopSpeaking();
             const word = allWordsData[currentGrade][currentSubject][currentIndex];
             const letters = word.split('');
@@ -837,18 +910,16 @@
             });
         }
 
-        function startTimer() {
-            timeLeft = 300;
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
+        function startWordTimer() {
+            timeLeft = 30;
+            if (wordTimer) clearInterval(wordTimer);
+            wordTimer = setInterval(() => {
                 timeLeft--;
-                const mins = Math.floor(timeLeft / 60);
-                const secs = timeLeft % 60;
-                document.getElementById('timer').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+                document.getElementById('timer').textContent = timeLeft;
 
                 if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    endPractice();
+                    clearInterval(wordTimer);
+                    moveToNextWord(); // Time's up, move to next
                 }
             }, 1000);
         }
@@ -903,15 +974,16 @@
         }
 
         function submitSpelling() {
-            if (isAutoAdvancing) return; // Prevent multiple submissions
+            if (isAutoAdvancing) return;
 
             const typed = currentLetters.join('');
             const correct = allWordsData[currentGrade][currentSubject][currentIndex];
 
             if (typed.toLowerCase() === correct.toLowerCase()) {
-                document.getElementById('feedback').textContent = '✓ Correct!';
+                document.getElementById('feedback').textContent = '✓ Correct! +1 Point';
                 document.getElementById('feedback').className = 'feedback correct';
-                practiceStats.correct++;
+                score++;
+                updateScore();
                 isAutoAdvancing = true;
                 setTimeout(() => {
                     isAutoAdvancing = false;
@@ -941,8 +1013,10 @@
                 endPractice();
             } else {
                 clearLetters();
+                generateAlphabetButtons();
                 updatePracticeDisplay();
                 document.getElementById('feedback').textContent = '';
+                startWordTimer();
             }
         }
 
@@ -953,16 +1027,19 @@
             document.getElementById('practiceProgress').textContent = currentIndex + ' / ' + words.length;
         }
 
+        function updateScore() {
+            document.getElementById('scoreValue').textContent = score;
+        }
+
         function endPractice() {
-            clearInterval(timerInterval);
+            clearInterval(wordTimer);
             stopSpeaking();
-            const accuracy = practiceStats.total > 0 ? Math.round(practiceStats.correct / practiceStats.total * 100) : 0;
-            alert('Practice Complete!\nCorrect: ' + practiceStats.correct + '/' + practiceStats.total + '\nAccuracy: ' + accuracy + '%');
+            alert('Practice Complete!\nFinal Score: ' + score + ' points\nOut of ' + practiceStats.total + ' words');
             exitPractice();
         }
 
         function exitPractice() {
-            clearInterval(timerInterval);
+            clearInterval(wordTimer);
             stopSpeaking();
             document.getElementById('practiceSection').classList.remove('active');
             document.getElementById('modeSelection').classList.add('active');
