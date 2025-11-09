@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spellathon Master v4.0</title>
+    <title>Spellathon Master v4.1</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -25,8 +25,21 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .menu-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #ddd;
+        }
+        .menu-left { display: flex; gap: 15px; align-items: center; }
+        .menu-right { display: flex; gap: 10px; align-items: center; }
+        .home-btn { padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .score-display-menu { padding: 8px 15px; background: #e0e7ff; color: #667eea; border-radius: 6px; font-weight: 600; font-size: 0.95em; }
         .main-content { padding: 40px; }
         .section { display: none; }
         .section.active { display: block; }
@@ -69,15 +82,34 @@
         .loading { text-align: center; padding: 40px; font-size: 1.3em; color: #667eea; }
         .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .stats-display { font-size: 1.1em; color: #667eea; font-weight: bold; text-align: center; margin-bottom: 15px; padding: 10px; background: #e0e7ff; border-radius: 10px; }
+        .completion-message {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .completion-message h2 { font-size: 2.5em; margin-bottom: 15px; }
+        .completion-message p { font-size: 1.3em; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Spellathon Master v4.0</h1>
-            <p>Learn → Practice → Test Yourself</p>
+            <h1>Spellathon Master v4.1</h1>
+            <p>Learn → Practice → Test</p>
         </div>
+
+        <div class="menu-bar" id="menuBar" style="display: none;">
+            <div class="menu-left">
+                <button class="home-btn" onclick="goHome()">🏠 Home</button>
+            </div>
+            <div class="menu-right">
+                <div class="score-display-menu">Score: <span id="sessionScore">0</span> words</div>
+            </div>
+        </div>
+
         <div class="main-content">
             <div class="section active" id="loadingSection">
                 <div class="loading">
@@ -90,21 +122,15 @@
             <div class="section" id="gradeSelection">
                 <h2 style="margin-bottom: 20px;">Select Grade</h2>
                 <div class="grade-subject-grid" id="gradeButtons"></div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-danger" onclick="goHome()">Back</button>
-                </div>
             </div>
 
             <!-- Subject Selection -->
             <div class="section" id="subjectSelection">
                 <h2 style="margin-bottom: 20px;">Select Subject</h2>
                 <div class="grade-subject-grid" id="subjectButtons"></div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-danger" onclick="goHome()">Back</button>
-                </div>
             </div>
 
-            <!-- Mode Selection (Learn&Practice vs Test) -->
+            <!-- Mode Selection -->
             <div class="section" id="modeSelection">
                 <h2 style="text-align: center; margin-bottom: 30px;">Select Mode</h2>
                 <div class="grid-2">
@@ -114,15 +140,12 @@
                     </div>
                     <div class="card" onclick="startTest()">
                         <h3>🧪 Test Yourself</h3>
-                        <p>Complete test with scoring and progress tracking</p>
+                        <p>Complete test with scoring</p>
                     </div>
-                </div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-danger" onclick="goHome()">Back</button>
                 </div>
             </div>
 
-            <!-- LEARN & PRACTICE Section -->
+            <!-- LEARN Section -->
             <div class="section" id="learnSection">
                 <div class="progress-bar"><div class="progress-fill" id="learnProgress">0%</div></div>
 
@@ -143,20 +166,16 @@
                     <div class="button-group" style="margin-top: 15px;">
                         <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
                         <button class="btn btn-secondary" onclick="goToNextLearnStep()">Next →</button>
-                        <button class="btn btn-danger" onclick="exitLearn()">Exit</button>
                     </div>
                 </div>
             </div>
 
-            <!-- PRACTICE Section (Same word typing) -->
+            <!-- PRACTICE Section -->
             <div class="section" id="practiceSection">
                 <div class="progress-bar"><div class="progress-fill" id="practiceProgress">0%</div></div>
 
                 <div class="word-display">
-                    <p style="font-size: 1.2em; color: #667eea; font-weight: bold;">Practice: Type the word you just learned</p>
-                    <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 8px;">
-                        <p style="font-size: 0.95em; color: #666;">Type below and press Enter or click Submit</p>
-                    </div>
+                    <p style="font-size: 1.3em; color: #667eea; font-weight: bold; margin-bottom: 15px;">Practice: Type the word you just learned</p>
                 </div>
 
                 <div class="selected-letters" id="practiceTyping">_</div>
@@ -169,25 +188,33 @@
                     <button class="btn btn-secondary" onclick="clearPractice()">Clear</button>
                     <button class="btn btn-success" onclick="submitPractice()">Submit</button>
                     <button class="btn btn-secondary" onclick="skipPractice()">Skip</button>
-                    <button class="btn btn-danger" onclick="exitLearn()">Exit</button>
                 </div>
             </div>
 
-            <!-- TEST Section -->
+            <!-- Completion Message -->
+            <div class="section" id="completionSection">
+                <div class="completion-message">
+                    <h2>🎉 Excellent Work!</h2>
+                    <p id="completionText">You've completed the set!</p>
+                    <p style="margin-top: 20px; font-size: 1.5em;">Total Score: <span id="completionScore">0</span> words</p>
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-success" onclick="goHome()" style="font-size: 1.2em;">Continue Learning</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEST Mode Selection -->
             <div class="section" id="testModeSelection">
                 <h2 style="margin-bottom: 30px; text-align: center;">Test Mode</h2>
                 <div class="grid-2">
                     <div class="card" onclick="startSubjectTest()">
                         <h3>📖 By Subject</h3>
-                        <p>Test words by subject (all words in that subject)</p>
+                        <p>Test words by subject</p>
                     </div>
                     <div class="card" onclick="startMixedTest()">
                         <h3>🎯 Mixed Test</h3>
-                        <p>Test from all subjects mixed together</p>
+                        <p>Test from all subjects</p>
                     </div>
-                </div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-danger" onclick="goHome()">Back</button>
                 </div>
             </div>
 
@@ -195,9 +222,6 @@
             <div class="section" id="subjectTestSelection">
                 <h2 style="margin-bottom: 20px;">Select Subject to Test</h2>
                 <div class="grade-subject-grid" id="subjectTestButtons"></div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-danger" onclick="goHome()">Back</button>
-                </div>
             </div>
 
             <!-- TEST Section -->
@@ -207,7 +231,6 @@
                 <div class="progress-bar"><div class="progress-fill" id="testProgress">0%</div></div>
 
                 <div class="word-display">
-                    <p style="font-size: 1.2em; color: #667eea; font-weight: bold;" id="testInstruction">Type the word</p>
                     <button class="btn btn-success" onclick="speakTestWord()" style="margin: 5px;">🔊 Play Word</button>
                     <button class="btn btn-secondary" onclick="speakTestLetters()" id="testPlayLettersBtn" style="margin: 5px; display: none;">🔊 Play Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
@@ -223,7 +246,17 @@
                     <button class="btn btn-secondary" onclick="clearTest()">Clear</button>
                     <button class="btn btn-success" onclick="submitTest()">Submit</button>
                     <button class="btn btn-secondary" onclick="skipTest()">Skip</button>
-                    <button class="btn btn-danger" onclick="exitTest()">Exit</button>
+                </div>
+            </div>
+
+            <!-- Test Completion -->
+            <div class="section" id="testCompletionSection">
+                <div class="completion-message">
+                    <h2>🎊 Test Complete!</h2>
+                    <p id="testCompletionText">Great job!</p>
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-success" onclick="goHome()" style="font-size: 1.2em;">Back to Home</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,8 +325,8 @@
         var currentIndex = 0;
         var learnWords = [];
         var testWords = [];
-        var currentMode = ''; // 'learn' or 'test'
-        var autoPlayTimer = null;
+        var sessionScore = 0; // Session-wide score
+        var subjectScores = {}; // Per-subject scores
         var testMarks = 0;
         var testCompleted = 0;
         var testTotal = 0;
@@ -304,7 +337,6 @@
         var testIsWrongAttempt = false;
         var practiceLetters = [];
         var practiceAttempt = 0;
-        var completedWords = []; // Cache for completed words
 
         function initializeApp() {
             fetch(GOOGLE_SHEETS_CSV_URL)
@@ -405,9 +437,11 @@
 
         function selectSubject(subject) {
             currentSubject = subject;
+            if (!subjectScores[subject]) subjectScores[subject] = 0;
             updateSubjectDisplay(subject);
             document.getElementById('subjectSelection').classList.remove('active');
             document.getElementById('modeSelection').classList.add('active');
+            document.getElementById('menuBar').style.display = 'flex';
         }
 
         function updateSubjectDisplay(subject) {
@@ -425,7 +459,6 @@
                 return;
             }
             currentIndex = 0;
-            currentMode = 'learn';
             document.getElementById('modeSelection').classList.remove('active');
             document.getElementById('learnSection').classList.add('active');
             displayLearnWord();
@@ -433,8 +466,7 @@
 
         async function displayLearnWord() {
             if (currentIndex >= learnWords.length) {
-                alert('Learning complete!');
-                goHome();
+                showCompletion();
                 return;
             }
 
@@ -452,9 +484,11 @@
             document.getElementById('learnMeaning').textContent = meaning;
 
             stopSpeaking();
-            if (autoPlayTimer) clearTimeout(autoPlayTimer);
 
-            playWord();
+            // Auto-play word only once
+            var u = new SpeechSynthesisUtterance(word);
+            u.rate = 0.8;
+            speechSynthesis.speak(u);
         }
 
         function playWord() {
@@ -525,7 +559,6 @@
         }
 
         function displayPracticeWord() {
-            var word = learnWords[currentIndex];
             var progress = Math.round((currentIndex + 1) / learnWords.length * 100);
             document.getElementById('practiceProgress').style.width = progress + '%';
             document.getElementById('practiceProgress').textContent = (currentIndex + 1) + '/' + learnWords.length;
@@ -583,15 +616,20 @@
             if (typed.toLowerCase() === correct.toLowerCase()) {
                 document.getElementById('practiceFeedback').textContent = '✓ Correct!';
                 document.getElementById('practiceFeedback').className = 'feedback correct';
-                completedWords.push(correct);
+
+                // Update scores
+                sessionScore++;
+                subjectScores[currentSubject]++;
+                document.getElementById('sessionScore').textContent = sessionScore;
+
                 setTimeout(function() {
                     currentIndex++;
+                    document.getElementById('practiceSection').classList.remove('active');
                     if (currentIndex < learnWords.length) {
-                        generatePracticeLetterButtons();
-                        displayPracticeWord();
+                        document.getElementById('learnSection').classList.add('active');
+                        displayLearnWord();
                     } else {
-                        alert('Practice complete! ' + completedWords.length + ' words learned.');
-                        goHome();
+                        showCompletion();
                     }
                 }, 1000);
             } else {
@@ -608,21 +646,21 @@
 
         function skipPractice() {
             currentIndex++;
+            document.getElementById('practiceSection').classList.remove('active');
             if (currentIndex < learnWords.length) {
-                generatePracticeLetterButtons();
-                displayPracticeWord();
+                document.getElementById('learnSection').classList.add('active');
+                displayLearnWord();
             } else {
-                alert('Practice complete!');
-                goHome();
+                showCompletion();
             }
         }
 
-        function exitLearn() {
-            stopSpeaking();
-            if (autoPlayTimer) clearTimeout(autoPlayTimer);
+        function showCompletion() {
+            document.getElementById('completionText').textContent = '🎉 Excellent! You completed ' + currentSubject + '!';
+            document.getElementById('completionScore').textContent = sessionScore;
             document.getElementById('learnSection').classList.remove('active');
             document.getElementById('practiceSection').classList.remove('active');
-            goHome();
+            document.getElementById('completionSection').classList.add('active');
         }
 
         // TEST MODE FUNCTIONS
@@ -674,13 +712,15 @@
             testMarks = 0;
             testCompleted = 0;
             testTotal = testWords.length;
-            currentMode = 'test';
 
             document.getElementById('testModeSelection').classList.remove('active');
             document.getElementById('subjectTestSelection').classList.remove('active');
             document.getElementById('testSection').classList.add('active');
 
             document.getElementById('testTotalMarks').textContent = testTotal;
+            document.getElementById('testMarksValue').textContent = testMarks;
+            document.getElementById('completedCount').textContent = testCompleted;
+
             generateTestLetterButtons();
             updateTestDisplay();
             startTestTimer();
@@ -787,8 +827,12 @@
 
                 testMarks++;
                 testCompleted++;
+                sessionScore++;
+
                 document.getElementById('testMarksValue').textContent = testMarks;
                 document.getElementById('completedCount').textContent = testCompleted;
+                document.getElementById('sessionScore').textContent = sessionScore;
+
                 testIsAutoAdvancing = true;
                 stopSpeaking();
                 clearInterval(testTimer);
@@ -841,30 +885,30 @@
             clearInterval(testTimer);
             stopSpeaking();
             var percentage = Math.round(testMarks / testTotal * 100);
-            alert('Test Complete!\nCompleted: ' + testCompleted + '\nMarks: ' + testMarks + ' / ' + testTotal + ' (' + percentage + '%)');
-            exitTest();
-        }
+            document.getElementById('testCompletionText').innerHTML = 
+                '<p style="font-size: 1.5em; margin: 20px 0;">Completed: ' + testCompleted + ' words</p>' +
+                '<p style="font-size: 1.8em; margin: 20px 0;">Marks: ' + testMarks + ' / ' + testTotal + '</p>' +
+                '<p style="font-size: 1.5em;">Score: ' + percentage + '%</p>';
 
-        function exitTest() {
-            clearInterval(testTimer);
-            stopSpeaking();
             document.getElementById('testSection').classList.remove('active');
-            goHome();
+            document.getElementById('testCompletionSection').classList.add('active');
         }
 
         function goHome() {
             stopSpeaking();
-            if (autoPlayTimer) clearTimeout(autoPlayTimer);
             if (testTimer) clearInterval(testTimer);
             document.getElementById('gradeSelection').classList.remove('active');
             document.getElementById('subjectSelection').classList.remove('active');
             document.getElementById('modeSelection').classList.remove('active');
             document.getElementById('learnSection').classList.remove('active');
             document.getElementById('practiceSection').classList.remove('active');
+            document.getElementById('completionSection').classList.remove('active');
             document.getElementById('testModeSelection').classList.remove('active');
             document.getElementById('subjectTestSelection').classList.remove('active');
             document.getElementById('testSection').classList.remove('active');
+            document.getElementById('testCompletionSection').classList.remove('active');
             document.getElementById('gradeSelection').classList.add('active');
+            document.getElementById('menuBar').style.display = 'none';
             currentGrade = '';
             currentSubject = '';
             renderGradeButtons();
