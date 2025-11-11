@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https: file:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src * ">
-    <title>Spellathon Master v5.1</title>
+    <title>Spellathon Master v5.2</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -70,7 +70,7 @@
         .completion-message { text-align: center; padding: 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 15px; margin: 20px 0; }
         .completion-message h2 { font-size: 2.5em; margin-bottom: 15px; }
         .completion-message p { font-size: 1.3em; }
-        .selected-letters { text-align: center; font-size: 2.5em; font-weight: bold; color: #667eea; margin-bottom: 20px; padding: 20px; background: #f0f0f0; border-radius: 10px; min-height: 60px; letter-spacing: 8px; font-family: 'Courier New', monospace; }
+        .selected-letters { text-align: center; font-size: 2.5em; font-weight: bold; color: #667eea; margin-bottom: 20px; padding: 20px; background: #f0f0f0; border-radius: 10px; min-height: 60px; letter-spacing: 8px; font-family: 'Courier New', monospace; word-break: break-all; }
         .letter-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; padding: 20px 10px; background: #f9f9f9; border-radius: 15px; min-height: 120px; align-items: flex-start; }
         .feedback { text-align: center; margin: 20px 0; font-size: 1.3em; font-weight: bold; min-height: 30px; }
         .feedback.correct { color: #10b981; }
@@ -82,15 +82,15 @@
         .set-btn:hover { transform: scale(1.05); }
         .set-btn.active { background: #667eea; color: white; border-color: #667eea; }
         .set-btn.completed { background: #10b981; color: white; border-color: #10b981; }
-        .set-btn.current { background: #fbbf24; color: #333; border-color: #f59e0b; }
         .set-info { font-size: 1.2em; color: #667eea; font-weight: 600; text-align: center; margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; }
+        .page-title { font-size: 1.5em; color: #667eea; font-weight: bold; margin-bottom: 20px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Spellathon Master v5.1</h1>
-            <p>Learn → Practice → Test (20-Word Sets with 10-Word Random Tests)</p>
+            <h1>Spellathon Master v5.2</h1>
+            <p>Learn → Practice → Test (Fixed Submission Logic)</p>
         </div>
 
         <div class="menu-bar" id="menuBar" style="display: none;">
@@ -125,7 +125,7 @@
                 <div class="grid-2">
                     <div class="card" onclick="startLearning()">
                         <h3>📚 Learn & Practice</h3>
-                        <p>Learn words then practice typing (20 words per set)</p>
+                        <p>Learn words then practice typing</p>
                     </div>
                     <div class="card" onclick="startTest()">
                         <h3>🧪 Test Yourself</h3>
@@ -139,41 +139,49 @@
                 <div class="sets-grid" id="setsGrid"></div>
             </div>
 
-            <div class="section" id="learnSection">
-                <div class="progress-bar"><div class="progress-fill" id="learnProgress">0%</div></div>
+            <!-- READING PAGE -->
+            <div class="section" id="readingSection">
+                <div class="page-title">📖 Reading Page - Learn the Word</div>
+                <div class="progress-bar"><div class="progress-fill" id="readingProgress">0%</div></div>
                 <div class="word-display">
-                    <div class="word-main" id="learnWord">Word</div>
-                    <div class="word-syllables" id="learnSyllables">Syl-la-bles</div>
-                    <div class="word-ipa" id="learnIPA">/word/</div>
+                    <div class="word-main" id="readingWord">Word</div>
+                    <div class="word-syllables" id="readingSyllables">Syl-la-bles</div>
+                    <div class="word-ipa" id="readingIPA">/word/</div>
 
                     <div class="button-group">
-                        <button class="btn btn-success" onclick="playWord()">🔊 Play Word</button>
-                        <button class="btn btn-secondary" onclick="playLetters()">🔊 Play Letters</button>
-                        <button class="btn btn-secondary" onclick="playSyllables()">🔊 Play Syllables</button>
+                        <button class="btn btn-success" onclick="playWordOnReading()">🔊 Play Word</button>
+                        <button class="btn btn-secondary" onclick="playLettersOnReading()">🔊 Play Letters</button>
+                        <button class="btn btn-secondary" onclick="playSyllablesOnReading()">🔊 Play Syllables</button>
                         <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                     </div>
 
-                    <div class="word-meaning" id="learnMeaning">Loading meaning...</div>
+                    <div class="word-meaning" id="readingMeaning">Loading meaning...</div>
 
                     <div class="button-group" style="margin-top: 15px;">
-                        <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
-                        <button class="btn btn-secondary" onclick="goToNextLearnStep()">Next →</button>
+                        <button class="btn btn-secondary" onclick="previousWordReading()">← Previous</button>
+                        <button class="btn btn-success" onclick="goToPracticePage()" style="font-size: 1.1em;">Next → Practice</button>
                     </div>
                 </div>
             </div>
 
+            <!-- PRACTICE PAGE -->
             <div class="section" id="practiceSection">
+                <div class="page-title">✏️ Practice Page - Type the Word</div>
                 <div class="progress-bar"><div class="progress-fill" id="practiceProgress">0%</div></div>
-                <div class="word-display">
-                    <p style="font-size: 1.3em; color: #667eea; font-weight: bold; margin-bottom: 15px;">Practice: Type the word</p>
+
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button class="btn btn-success" onclick="playWordOnPractice()">🔊 Play Word</button>
+                    <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
+
                 <div class="selected-letters" id="practiceTyping">_</div>
                 <div class="letter-buttons" id="practiceLetters"></div>
                 <div class="feedback" id="practiceFeedback"></div>
+
                 <div style="text-align: center; margin-top: 20px;">
                     <button class="btn btn-secondary" onclick="clearPractice()">Clear</button>
-                    <button class="btn btn-success" onclick="submitPractice()">Submit</button>
-                    <button class="btn btn-secondary" onclick="skipPractice()">Skip</button>
+                    <button class="btn btn-success" onclick="submitPractice()" style="font-size: 1.2em;">Submit</button>
+                    <button class="btn btn-secondary" onclick="relearningClick()">Relearn</button>
                 </div>
             </div>
 
@@ -267,15 +275,13 @@
             }
         }
 
-        function playWord() {
-            stopSpeaking();
-            if (currentLearnWords && currentLearnWords.length > 0 && currentLearnIndex < currentLearnWords.length) {
+        function playWordOnReading() {
+            if (currentLearnWords && currentLearnIndex < currentLearnWords.length) {
                 playAudio(currentLearnWords[currentLearnIndex]);
             }
         }
 
-        function playLetters() {
-            stopSpeaking();
+        function playLettersOnReading() {
             var word = currentLearnWords[currentLearnIndex];
             var syllablesArray = getSyllablesArray(word);
             var delay = 0;
@@ -292,8 +298,7 @@
             }
         }
 
-        function playSyllables() {
-            stopSpeaking();
+        function playSyllablesOnReading() {
             var word = currentLearnWords[currentLearnIndex];
             var syls = syllabify(word).split('-');
             var delay = 0;
@@ -305,14 +310,17 @@
             }
         }
 
+        function playWordOnPractice() {
+            var word = currentLearnWords[currentLearnIndex];
+            playAudio(word);
+        }
+
         function speakTestWord() {
-            stopSpeaking();
             var word = testWords[currentIndex];
             playAudio(word);
         }
 
         function speakTestLetters() {
-            stopSpeaking();
             var word = testWords[currentIndex];
             var letters = word.split('');
             var d = 0;
@@ -563,54 +571,55 @@
             currentLearnIndex = 0;
             setScore = 0;
             document.getElementById('setSelectionSection').classList.remove('active');
-            document.getElementById('learnSection').classList.add('active');
-            displayLearnWord();
+            document.getElementById('readingSection').classList.add('active');
+            displayReadingPage();
         }
 
-        async function displayLearnWord() {
+        async function displayReadingPage() {
             if (currentLearnIndex >= currentLearnWords.length) {
                 showSetCompletion();
                 return;
             }
 
             var word = currentLearnWords[currentLearnIndex];
-            document.getElementById('learnWord').textContent = word;
-            document.getElementById('learnSyllables').textContent = syllabify(word);
-            document.getElementById('learnIPA').textContent = generateIPAwithSyllables(word);
-            document.getElementById('learnMeaning').textContent = 'Loading...';
+            document.getElementById('readingWord').textContent = word;
+            document.getElementById('readingSyllables').textContent = syllabify(word);
+            document.getElementById('readingIPA').textContent = generateIPAwithSyllables(word);
+            document.getElementById('readingMeaning').textContent = 'Loading...';
 
             var progress = Math.round((currentLearnIndex + 1) / currentLearnWords.length * 100);
-            document.getElementById('learnProgress').style.width = progress + '%';
-            document.getElementById('learnProgress').textContent = (currentLearnIndex + 1) + '/' + currentLearnWords.length;
+            document.getElementById('readingProgress').style.width = progress + '%';
+            document.getElementById('readingProgress').textContent = (currentLearnIndex + 1) + '/' + currentLearnWords.length;
 
             var meaning = await getMeaningFromAPI(word);
-            document.getElementById('learnMeaning').textContent = meaning;
+            document.getElementById('readingMeaning').textContent = meaning;
 
             stopSpeaking();
-            playWord();
+            playWordOnReading();
         }
 
-        function previousWord() {
+        function previousWordReading() {
             if (currentLearnIndex > 0) {
                 currentLearnIndex--;
-                displayLearnWord();
+                displayReadingPage();
             }
         }
 
-        function goToNextLearnStep() {
+        function goToPracticePage() {
             stopSpeaking();
             practiceLetters = [];
             practiceAttempt = 0;
-            document.getElementById('learnSection').classList.remove('active');
+            document.getElementById('readingSection').classList.remove('active');
             document.getElementById('practiceSection').classList.add('active');
-            displayPracticeWord();
+            displayPracticePage();
         }
 
-        function displayPracticeWord() {
+        function displayPracticePage() {
             var progress = Math.round((currentLearnIndex + 1) / currentLearnWords.length * 100);
             document.getElementById('practiceProgress').style.width = progress + '%';
             document.getElementById('practiceProgress').textContent = (currentLearnIndex + 1) + '/' + currentLearnWords.length;
             generatePracticeLetterButtons();
+            playWordOnPractice();
         }
 
         function generatePracticeLetterButtons() {
@@ -630,25 +639,27 @@
             }
             document.getElementById('practiceTyping').textContent = '_';
             document.getElementById('practiceFeedback').textContent = '';
+            practiceAttempt = 0;
         }
 
         function selectPracticeLetter(letter) {
             practiceLetters.push(letter);
             document.getElementById('practiceTyping').textContent = practiceLetters.join('');
-            if (practiceLetters.length === currentLearnWords[currentLearnIndex].length) {
-                setTimeout(function() { submitPractice(); }, 300);
-            }
         }
 
         function clearPractice() {
             practiceLetters = [];
             document.getElementById('practiceTyping').textContent = '_';
             document.getElementById('practiceFeedback').textContent = '';
+            practiceAttempt = 0;
         }
 
         function submitPractice() {
             var typed = practiceLetters.join('');
             var correct = currentLearnWords[currentLearnIndex];
+
+            console.log('Typed: "' + typed + '", Correct: "' + correct + '"');
+            console.log('Typed lowercase: "' + typed.toLowerCase() + '", Correct lowercase: "' + correct.toLowerCase() + '"');
 
             if (typed.toLowerCase() === correct.toLowerCase()) {
                 document.getElementById('practiceFeedback').textContent = '✓ Correct!';
@@ -663,8 +674,8 @@
                     currentLearnIndex++;
                     document.getElementById('practiceSection').classList.remove('active');
                     if (currentLearnIndex < currentLearnWords.length) {
-                        document.getElementById('learnSection').classList.add('active');
-                        displayLearnWord();
+                        document.getElementById('readingSection').classList.add('active');
+                        displayReadingPage();
                     } else {
                         showSetCompletion();
                     }
@@ -672,24 +683,19 @@
             } else {
                 practiceAttempt++;
                 if (practiceAttempt === 1) {
-                    document.getElementById('practiceFeedback').textContent = 'Try again!';
+                    document.getElementById('practiceFeedback').textContent = '❌ Try again!';
                     document.getElementById('practiceFeedback').className = 'feedback incorrect';
                 } else {
-                    document.getElementById('practiceFeedback').textContent = 'Wrong: ' + correct;
+                    document.getElementById('practiceFeedback').textContent = '❌ Wrong: ' + correct;
                     document.getElementById('practiceFeedback').className = 'feedback incorrect';
                 }
             }
         }
 
-        function skipPractice() {
-            currentLearnIndex++;
+        function relearningClick() {
             document.getElementById('practiceSection').classList.remove('active');
-            if (currentLearnIndex < currentLearnWords.length) {
-                document.getElementById('learnSection').classList.add('active');
-                displayLearnWord();
-            } else {
-                showSetCompletion();
-            }
+            document.getElementById('readingSection').classList.add('active');
+            displayReadingPage();
         }
 
         function showSetCompletion() {
@@ -700,7 +706,7 @@
 
             document.getElementById('completionText').textContent = '🎉 Set ' + (currentSetIndex + 1) + ' Complete!';
             document.getElementById('completionScore').textContent = setScore;
-            document.getElementById('learnSection').classList.remove('active');
+            document.getElementById('readingSection').classList.remove('active');
             document.getElementById('practiceSection').classList.remove('active');
             document.getElementById('completionSection').classList.add('active');
         }
@@ -711,7 +717,7 @@
             renderSetButtons();
         }
 
-        // ========== TEST MODE WITH RANDOM 10-WORD PER SET ==========
+        // ========== TEST MODE ==========
         function startTest() {
             allSubjectWords = allWordsData[currentGrade][currentSubject];
             if (!allSubjectWords || allSubjectWords.length === 0) {
@@ -811,9 +817,6 @@
         function selectTestLetter(letter) {
             currentLetters.push(letter);
             document.getElementById('testTyping').textContent = currentLetters.join('');
-            if (currentLetters.length === testWords[currentIndex].length) {
-                setTimeout(function() { submitTest(); }, 300);
-            }
         }
 
         function clearTest() {
@@ -849,11 +852,11 @@
             } else {
                 if (!testIsWrongAttempt) {
                     testIsWrongAttempt = true;
-                    document.getElementById('testFeedback').textContent = 'Incorrect. Try again or use Play Letters.';
+                    document.getElementById('testFeedback').textContent = '❌ Incorrect. Try again or use Play Letters.';
                     document.getElementById('testFeedback').className = 'feedback incorrect';
                     document.getElementById('testPlayLettersBtn').style.display = 'inline-block';
                 } else {
-                    document.getElementById('testFeedback').textContent = 'Wrong: ' + correct;
+                    document.getElementById('testFeedback').textContent = '❌ Wrong: ' + correct;
                     document.getElementById('testFeedback').className = 'feedback incorrect';
                 }
             }
