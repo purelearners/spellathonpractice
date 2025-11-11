@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https: file:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src * ">
-    <title>Spellathon Master v5.2</title>
+    <title>Spellathon Master - Final</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -37,14 +37,13 @@
             border-bottom: 2px solid #ddd;
         }
         .home-btn { padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .score-display-menu { padding: 8px 15px; background: #e0e7ff; color: #667eea; border-radius: 6px; font-weight: 600; }
+        .score-display { padding: 8px 15px; background: #e0e7ff; color: #667eea; border-radius: 6px; font-weight: 600; }
         .main-content { padding: 40px; }
         .section { display: none; }
         .section.active { display: block; }
         .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; margin: 5px; }
         .btn-success { background: #10b981; color: white; }
         .btn-secondary { background: #f0f0f0; color: #333; }
-        .btn-danger { background: #ef4444; color: white; }
         .btn-stop { background: #ff6b6b; color: white; }
         .btn-letter { padding: 12px 14px; margin: 3px; background: #667eea; color: white; border: 2px solid #667eea; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; min-width: 38px; }
         .btn-letter:hover { transform: scale(1.08); }
@@ -60,46 +59,39 @@
         .word-ipa { font-size: 1.6em; color: #555; margin-bottom: 15px; font-style: italic; }
         .word-meaning { font-size: 1.1em; color: #333; margin-bottom: 15px; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 8px; text-align: left; }
         .button-group { text-align: center; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-        .grade-subject-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .grid-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .selector-btn { padding: 15px 20px; background: #f0f0f0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; }
         .selector-btn:hover { background: #e0e0e0; }
         .selector-btn.selected { background: #667eea; color: white; border-color: #667eea; }
-        .loading { text-align: center; padding: 40px; font-size: 1.3em; color: #667eea; }
+        .loading { text-align: center; padding: 40px; }
         .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .completion-message { text-align: center; padding: 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 15px; margin: 20px 0; }
-        .completion-message h2 { font-size: 2.5em; margin-bottom: 15px; }
-        .completion-message p { font-size: 1.3em; }
-        .selected-letters { text-align: center; font-size: 2.5em; font-weight: bold; color: #667eea; margin-bottom: 20px; padding: 20px; background: #f0f0f0; border-radius: 10px; min-height: 60px; letter-spacing: 8px; font-family: 'Courier New', monospace; word-break: break-all; }
+        .completion { text-align: center; padding: 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 15px; margin: 20px 0; }
+        .completion h2 { font-size: 2.5em; margin-bottom: 15px; }
+        .completion p { font-size: 1.3em; }
+        .selected-letters { text-align: center; font-size: 2.5em; font-weight: bold; color: #667eea; margin-bottom: 20px; padding: 20px; background: #f0f0f0; border-radius: 10px; min-height: 60px; letter-spacing: 8px; font-family: 'Courier New'; }
         .letter-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; padding: 20px 10px; background: #f9f9f9; border-radius: 15px; min-height: 120px; align-items: flex-start; }
         .feedback { text-align: center; margin: 20px 0; font-size: 1.3em; font-weight: bold; min-height: 30px; }
         .feedback.correct { color: #10b981; }
         .feedback.incorrect { color: #ef4444; }
-        .marks-display { font-size: 1.3em; color: #667eea; font-weight: bold; text-align: center; margin-bottom: 15px; padding: 10px; background: #e0e7ff; border-radius: 10px; }
+        .marks { font-size: 1.3em; color: #667eea; font-weight: bold; text-align: center; margin-bottom: 15px; padding: 10px; background: #e0e7ff; border-radius: 10px; }
         .timer { font-size: 2.5em; color: #ef4444; font-weight: bold; text-align: center; margin-bottom: 20px; padding: 20px; background: #fff3cd; border-radius: 10px; border: 2px solid #ef4444; }
         .sets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin: 20px 0; }
-        .set-btn { padding: 15px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; background: #f0f0f0; }
-        .set-btn:hover { transform: scale(1.05); }
-        .set-btn.active { background: #667eea; color: white; border-color: #667eea; }
+        .set-btn { padding: 15px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: 600; background: #f0f0f0; }
         .set-btn.completed { background: #10b981; color: white; border-color: #10b981; }
-        .set-info { font-size: 1.2em; color: #667eea; font-weight: 600; text-align: center; margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; }
         .page-title { font-size: 1.5em; color: #667eea; font-weight: bold; margin-bottom: 20px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Spellathon Master v5.2</h1>
-            <p>Learn → Practice → Test (Fixed Submission Logic)</p>
+            <h1>Spellathon Master - FINAL</h1>
+            <p>Learn → Practice → Test (Production Ready)</p>
         </div>
 
         <div class="menu-bar" id="menuBar" style="display: none;">
-            <div>
-                <button class="home-btn" onclick="goHome()">🏠 Home</button>
-            </div>
-            <div>
-                <div class="score-display-menu">Score: <span id="sessionScore">0</span> words</div>
-            </div>
+            <button class="home-btn" onclick="goHome()">🏠 Home</button>
+            <div class="score-display">Score: <span id="sessionScore">0</span> words</div>
         </div>
 
         <div class="main-content">
@@ -112,12 +104,12 @@
 
             <div class="section" id="gradeSelection">
                 <h2 style="margin-bottom: 20px;">Select Grade</h2>
-                <div class="grade-subject-grid" id="gradeButtons"></div>
+                <div class="grid-cols" id="gradeButtons"></div>
             </div>
 
             <div class="section" id="subjectSelection">
                 <h2 style="margin-bottom: 20px;">Select Subject</h2>
-                <div class="grade-subject-grid" id="subjectButtons"></div>
+                <div class="grid-cols" id="subjectButtons"></div>
             </div>
 
             <div class="section" id="modeSelection">
@@ -139,7 +131,6 @@
                 <div class="sets-grid" id="setsGrid"></div>
             </div>
 
-            <!-- READING PAGE -->
             <div class="section" id="readingSection">
                 <div class="page-title">📖 Reading Page - Learn the Word</div>
                 <div class="progress-bar"><div class="progress-fill" id="readingProgress">0%</div></div>
@@ -147,46 +138,39 @@
                     <div class="word-main" id="readingWord">Word</div>
                     <div class="word-syllables" id="readingSyllables">Syl-la-bles</div>
                     <div class="word-ipa" id="readingIPA">/word/</div>
-
                     <div class="button-group">
-                        <button class="btn btn-success" onclick="playWordOnReading()">🔊 Play Word</button>
-                        <button class="btn btn-secondary" onclick="playLettersOnReading()">🔊 Play Letters</button>
-                        <button class="btn btn-secondary" onclick="playSyllablesOnReading()">🔊 Play Syllables</button>
+                        <button class="btn btn-success" onclick="playWordReading()">🔊 Play Word</button>
+                        <button class="btn btn-secondary" onclick="playLettersReading()">🔊 Play Letters</button>
+                        <button class="btn btn-secondary" onclick="playSyllablesReading()">🔊 Play Syllables</button>
                         <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                     </div>
-
                     <div class="word-meaning" id="readingMeaning">Loading meaning...</div>
-
                     <div class="button-group" style="margin-top: 15px;">
-                        <button class="btn btn-secondary" onclick="previousWordReading()">← Previous</button>
-                        <button class="btn btn-success" onclick="goToPracticePage()" style="font-size: 1.1em;">Next → Practice</button>
+                        <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
+                        <button class="btn btn-success" onclick="goToPractice()" style="font-size: 1.1em;">Next → Practice</button>
                     </div>
                 </div>
             </div>
 
-            <!-- PRACTICE PAGE -->
             <div class="section" id="practiceSection">
                 <div class="page-title">✏️ Practice Page - Type the Word</div>
                 <div class="progress-bar"><div class="progress-fill" id="practiceProgress">0%</div></div>
-
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <button class="btn btn-success" onclick="playWordOnPractice()">🔊 Play Word</button>
+                    <button class="btn btn-success" onclick="playWordPractice()">🔊 Play Word</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
-
                 <div class="selected-letters" id="practiceTyping">_</div>
                 <div class="letter-buttons" id="practiceLetters"></div>
                 <div class="feedback" id="practiceFeedback"></div>
-
                 <div style="text-align: center; margin-top: 20px;">
                     <button class="btn btn-secondary" onclick="clearPractice()">Clear</button>
                     <button class="btn btn-success" onclick="submitPractice()" style="font-size: 1.2em;">Submit</button>
-                    <button class="btn btn-secondary" onclick="relearningClick()">Relearn</button>
+                    <button class="btn btn-secondary" onclick="goBackToReading()">Relearn</button>
                 </div>
             </div>
 
             <div class="section" id="completionSection">
-                <div class="completion-message">
+                <div class="completion">
                     <h2>🎉 Set Complete!</h2>
                     <p id="completionText">You've completed this set!</p>
                     <p style="margin-top: 20px; font-size: 1.5em;">Set Score: <span id="completionScore">0</span> words</p>
@@ -198,21 +182,18 @@
 
             <div class="section" id="testSetSelectionSection">
                 <h2 style="margin-bottom: 20px;">Select Set to Test</h2>
-                <div class="set-info">Each test will have 10 random words from the selected set</div>
                 <div class="sets-grid" id="testSetsGrid"></div>
             </div>
 
             <div class="section" id="testSection">
-                <div class="marks-display">Completed: <span id="completedCount">0</span> | Marks: <span id="testMarksValue">0</span> / 10 | Set: <span id="currentTestSet">1</span></div>
+                <div class="marks">Completed: <span id="completedCount">0</span> | Marks: <span id="testMarks">0</span> / 10 | Set: <span id="currentSet">1</span></div>
                 <div class="timer" id="testTimer">30</div>
                 <div class="progress-bar"><div class="progress-fill" id="testProgress">0%</div></div>
-
-                <div class="word-display">
-                    <button class="btn btn-success" onclick="speakTestWord()" style="margin: 5px;">🔊 Play Word</button>
-                    <button class="btn btn-secondary" onclick="speakTestLetters()" id="testPlayLettersBtn" style="margin: 5px; display: none;">🔊 Play Letters</button>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button class="btn btn-success" onclick="playWordTest()">🔊 Play Word</button>
+                    <button class="btn btn-secondary" id="testPlayLettersBtn" onclick="playLettersTest()" style="display: none;">🔊 Play Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
-
                 <div class="selected-letters" id="testTyping">_</div>
                 <div class="letter-buttons" id="testLetters"></div>
                 <div class="feedback" id="testFeedback"></div>
@@ -224,7 +205,7 @@
             </div>
 
             <div class="section" id="testCompletionSection">
-                <div class="completion-message">
+                <div class="completion">
                     <h2>🎊 Test Complete!</h2>
                     <p id="testCompletionText">Great job!</p>
                     <div style="margin-top: 30px;">
@@ -237,313 +218,228 @@
 
     <script>
         document.addEventListener('deviceready', onDeviceReady, false);
-        function onDeviceReady() {
-            console.log('Cordova device ready');
-            initializeApp();
-        }
+        function onDeviceReady() { initializeApp(); }
 
         var GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
 
-        // ========== AUDIO FUNCTIONS ==========
+        // ========== AUDIO ==========
         function stopSpeaking() {
             try {
                 if (window.speechSynthesis) window.speechSynthesis.cancel();
                 if (window.TTS) window.TTS.stop();
-            } catch(e) {
-                console.error('Stop error:', e);
-            }
+            } catch(e) {}
         }
 
         function playAudio(text) {
             try {
                 stopSpeaking();
                 if (window.TTS && typeof window.TTS.speak === 'function') {
-                    window.TTS.speak({
-                        text: text,
-                        locale: 'en-US',
-                        rate: 0.75
-                    });
+                    window.TTS.speak({ text: text, locale: 'en-US', rate: 0.75 });
                 } else if (window.speechSynthesis) {
-                    var utterance = new SpeechSynthesisUtterance(text);
-                    utterance.rate = 0.7;
-                    utterance.pitch = 1;
-                    utterance.volume = 1;
-                    speechSynthesis.speak(utterance);
+                    var u = new SpeechSynthesisUtterance(text);
+                    u.rate = 0.7;
+                    u.pitch = 1;
+                    u.volume = 1;
+                    speechSynthesis.speak(u);
                 }
-            } catch (error) {
-                console.error('Audio playback error:', error);
-            }
+            } catch (e) {}
         }
 
-        function playWordOnReading() {
-            if (currentLearnWords && currentLearnIndex < currentLearnWords.length) {
-                playAudio(currentLearnWords[currentLearnIndex]);
-            }
-        }
-
-        function playLettersOnReading() {
-            var word = currentLearnWords[currentLearnIndex];
-            var syllablesArray = getSyllablesArray(word);
-            var delay = 0;
-            for (var s = 0; s < syllablesArray.length; s++) {
-                var syl = syllablesArray[s];
-                var letters = syl.split('');
-                for (var l = 0; l < letters.length; l++) {
-                    (function(letter, d) {
-                        setTimeout(function() { playAudio(letter); }, d);
-                    })(letters[l], delay);
-                    delay += 100;
-                }
-                delay += 800;
-            }
-        }
-
-        function playSyllablesOnReading() {
-            var word = currentLearnWords[currentLearnIndex];
-            var syls = syllabify(word).split('-');
-            var delay = 0;
-            for (var i = 0; i < syls.length; i++) {
-                (function(syl, d) {
-                    setTimeout(function() { playAudio(syl); }, d);
-                })(syls[i], delay);
-                delay += 1000;
-            }
-        }
-
-        function playWordOnPractice() {
-            var word = currentLearnWords[currentLearnIndex];
-            playAudio(word);
-        }
-
-        function speakTestWord() {
-            var word = testWords[currentIndex];
-            playAudio(word);
-        }
-
-        function speakTestLetters() {
-            var word = testWords[currentIndex];
-            var letters = word.split('');
+        function playWordReading() { playAudio(currentWords[currentIdx]); }
+        function playLettersReading() {
+            var word = currentWords[currentIdx];
+            var syls = getSyllables(word);
             var d = 0;
-            for (var i = 0; i < letters.length; i++) {
+            for (var s = 0; s < syls.length; s++) {
+                for (var l = 0; l < syls[s].length; l++) {
+                    (function(letter, delay) {
+                        setTimeout(function() { playAudio(letter); }, delay);
+                    })(syls[s][l], d);
+                    d += 100;
+                }
+                d += 800;
+            }
+        }
+        function playSyllablesReading() {
+            var word = currentWords[currentIdx];
+            var syls = syllabify(word).split('-');
+            var d = 0;
+            for (var i = 0; i < syls.length; i++) {
+                (function(syl, delay) {
+                    setTimeout(function() { playAudio(syl); }, delay);
+                })(syls[i], d);
+                d += 1000;
+            }
+        }
+        function playWordPractice() { playAudio(currentWords[currentIdx]); }
+        function playWordTest() { playAudio(testWords[testIdx]); }
+        function playLettersTest() {
+            var word = testWords[testIdx];
+            var d = 0;
+            for (var i = 0; i < word.length; i++) {
                 (function(letter, delay) {
                     setTimeout(function() { playAudio(letter); }, delay);
-                })(letters[i], d);
+                })(word[i], d);
                 d += 800;
             }
         }
 
-        // ========== UTILITY FUNCTIONS ==========
-        async function getMeaningFromAPI(word) {
+        // ========== UTILITIES ==========
+        function syllabify(word) {
+            var regex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
+            var syls = word.match(regex) || [word];
+            return syls.map(function(s) { return s.charAt(0).toUpperCase() + s.slice(1); }).join('-');
+        }
+
+        function getSyllables(word) {
+            var regex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
+            return word.match(regex) || [word];
+        }
+
+        function getIPA(word) {
+            var syls = getSyllables(word);
+            var ipa = [];
+            for (var s = 0; s < syls.length; s++) {
+                var syl = syls[s].toLowerCase();
+                var ip = '';
+                for (var i = 0; i < syl.length; i++) {
+                    var ch = syl[i];
+                    var next = i < syl.length - 1 ? syl[i + 1] : '';
+                    if (ch === 'a') ip += (next === 'i' || next === 'y') ? 'eɪ' : 'æ';
+                    else if (ch === 'e') ip += (next === 'e') ? 'iː' : 'ɛ';
+                    else if (ch === 'i') ip += 'ɪ';
+                    else if (ch === 'o') ip += 'ɒ';
+                    else if (ch === 'u') ip += 'ʌ';
+                    else ip += ch;
+                }
+                ipa.push(ip);
+            }
+            return '/' + ipa.join('-') + '/';
+        }
+
+        async function getMeaning(word) {
             try {
-                var response = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word.toLowerCase());
-                if (response.ok) {
-                    var data = await response.json();
+                var res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word.toLowerCase());
+                if (res.ok) {
+                    var data = await res.json();
                     if (data && data.length > 0 && data[0].meanings && data[0].meanings.length > 0) {
                         return data[0].meanings[0].definitions[0].definition;
                     }
                 }
-                return 'No meaning found.';
-            } catch (error) {
+                return 'Definition not available.';
+            } catch (e) {
                 return 'Definition not available.';
             }
         }
 
-        function syllabify(word) {
-            var syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
-            var syllables = word.match(syllableRegex) || [word];
-            return syllables.map(function(s) { return s.charAt(0).toUpperCase() + s.slice(1); }).join('-');
+        function cleanWord(word) {
+            return word.trim().replace(/[^\w\s'-]/g, '').replace(/\s+/g, '').toLowerCase();
         }
 
-        function getSyllablesArray(word) {
-            var syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
-            return word.match(syllableRegex) || [word];
-        }
-
-        function generateIPAwithSyllables(word) {
-            var syllables = getSyllablesArray(word);
-            var ipaParts = [];
-            for (var s = 0; s < syllables.length; s++) {
-                var syl = syllables[s].toLowerCase();
-                var sylIpa = '';
-                for (var i = 0; i < syl.length; i++) {
-                    var char = syl[i];
-                    var next = i < syl.length - 1 ? syl[i + 1] : '';
-                    if (char === 'a') sylIpa += (next === 'i' || next === 'y') ? 'eɪ' : 'æ';
-                    else if (char === 'e') sylIpa += (next === 'e') ? 'iː' : 'ɛ';
-                    else if (char === 'i') sylIpa += 'ɪ';
-                    else if (char === 'o') sylIpa += 'ɒ';
-                    else if (char === 'u') sylIpa += 'ʌ';
-                    else sylIpa += char;
-                }
-                ipaParts.push(sylIpa);
-            }
-            return '/' + ipaParts.join('-') + '/';
-        }
-
-        function getRandomElements(arr, count) {
+        function getRandom(arr, count) {
             var shuffled = arr.slice().sort(function() { return 0.5 - Math.random(); });
             return shuffled.slice(0, Math.min(count, arr.length));
         }
 
-        // ========== STATE VARIABLES ==========
-        var allWordsData = {};
-        var currentGrade = '';
-        var currentSubject = '';
-        var currentIndex = 0;
-        var currentSetIndex = 0;
-        var currentTestSetIndex = 0;
-        var allSubjectWords = [];
-        var wordSets = [];
-        var currentLearnWords = [];
-        var currentLearnIndex = 0;
-        var testWords = [];
-        var sessionScore = 0;
-        var subjectScores = {};
-        var completedSets = [];
-        var testMarks = 0;
-        var testCompleted = 0;
-        var testTotal = 0;
-        var currentLetters = [];
-        var testTimer = null;
-        var testTimeLeft = 30;
-        var testIsAutoAdvancing = false;
-        var testIsWrongAttempt = false;
-        var practiceLetters = [];
-        var practiceAttempt = 0;
-        var setScore = 0;
+        // ========== STATE ==========
+        var allData = {};
+        var grade = '', subject = '';
+        var currentWords = [], currentIdx = 0;
+        var wordSets = [], setIdx = 0;
+        var testWords = [], testIdx = 0;
+        var score = 0, setScore = 0, testScore = 0;
+        var typed = [], testTyped = [];
+        var attempt = 0, testAttempt = 0;
+        var testTimer = null, timeLeft = 30, autoAdv = false, wrongAttempt = false;
+        var completedSets = {};
 
-        // ========== INITIALIZATION ==========
+        // ========== INIT ==========
         function initializeApp() {
             fetch(GOOGLE_SHEETS_CSV_URL)
-                .then(function(response) { return response.text(); })
-                .then(function(csvText) {
-                    parseSheetData(csvText);
+                .then(function(r) { return r.text(); })
+                .then(function(csv) {
+                    parseData(csv);
                     document.getElementById('loadingSection').classList.remove('active');
                     document.getElementById('gradeSelection').classList.add('active');
-                    renderGradeButtons();
+                    renderGrades();
                 })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    alert('Error loading data: ' + error.message);
-                });
+                .catch(function(e) { alert('Error: ' + e.message); });
         }
 
-        function parseSheetData(csv) {
-            var allLines = [];
-            var currentLine = '';
-            for (var i = 0; i < csv.length; i++) {
-                var ch = csv[i];
-                if (ch === String.fromCharCode(10)) {
-                    allLines.push(currentLine);
-                    currentLine = '';
-                } else if (ch === String.fromCharCode(13)) {
-                    allLines.push(currentLine);
-                    currentLine = '';
-                    if (csv[i + 1] === String.fromCharCode(10)) i++;
-                } else {
-                    currentLine += ch;
-                }
-            }
-            if (currentLine) allLines.push(currentLine);
-
-            allWordsData = {};
-            for (var i = 1; i < allLines.length; i++) {
-                var line = allLines[i].trim();
+        function parseData(csv) {
+            var lines = csv.split(/\r?\n/);
+            allData = {};
+            for (var i = 1; i < lines.length; i++) {
+                var line = lines[i].trim();
                 if (!line) continue;
                 var parts = line.split(',');
                 if (parts.length >= 3) {
-                    var grade = parts[0].trim().replace(/^"|"$/g, '').trim();
-                    var subject = parts[1].trim().replace(/^"|"$/g, '').trim();
-                    var word = parts[2].trim().replace(/^"|"$/g, '').trim();
-                    if (grade && subject && word) {
-                        if (!allWordsData[grade]) allWordsData[grade] = {};
-                        if (!allWordsData[grade][subject]) allWordsData[grade][subject] = [];
-                        allWordsData[grade][subject].push(word);
+                    var g = parts[0].trim().replace(/^"|"$/g, '').trim();
+                    var s = parts[1].trim().replace(/^"|"$/g, '').trim();
+                    var w = parts[2].trim().replace(/^"|"$/g, '').trim();
+
+                    // ===== DATA CLEANING =====
+                    w = w.trim();
+                    w = w.replace(/[^\w\s'-]/g, '');
+                    w = w.replace(/\s+/g, ' ').trim();
+                    w = w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+                    // =========================
+
+                    if (g && s && w) {
+                        if (!allData[g]) allData[g] = {};
+                        if (!allData[g][s]) allData[g][s] = [];
+                        allData[g][s].push(w);
                     }
                 }
             }
         }
 
-        // ========== GRADE & SUBJECT SELECTION ==========
-        function renderGradeButtons() {
+        // ========== SELECTION ==========
+        function renderGrades() {
             var container = document.getElementById('gradeButtons');
             container.innerHTML = '';
-            for (var grade in allWordsData) {
+            for (var g in allData) {
                 var btn = document.createElement('button');
                 btn.className = 'selector-btn';
-                btn.textContent = grade;
-                btn.onclick = (function(g) {
-                    return function() { selectGrade(g); };
-                })(grade);
+                btn.textContent = g;
+                btn.onclick = (function(gr) { return function() { selectGrade(gr); }; })(g);
                 container.appendChild(btn);
             }
         }
 
-        function selectGrade(grade) {
-            currentGrade = grade;
-            updateGradeDisplay(grade);
-            renderSubjectButtons();
-        }
-
-        function updateGradeDisplay(grade) {
-            var btns = document.getElementById('gradeButtons').getElementsByClassName('selector-btn');
-            for (var i = 0; i < btns.length; i++) {
-                if (btns[i].textContent === grade) btns[i].classList.add('selected');
-                else btns[i].classList.remove('selected');
-            }
-        }
-
-        function renderSubjectButtons() {
+        function selectGrade(g) {
+            grade = g;
             var container = document.getElementById('subjectButtons');
             container.innerHTML = '';
-            for (var subject in allWordsData[currentGrade]) {
+            for (var s in allData[g]) {
                 var btn = document.createElement('button');
                 btn.className = 'selector-btn';
-                btn.textContent = subject;
-                btn.onclick = (function(s) {
-                    return function() { selectSubject(s); };
-                })(subject);
+                btn.textContent = s;
+                btn.onclick = (function(sb) { return function() { selectSubject(sb); }; })(s);
                 container.appendChild(btn);
             }
             document.getElementById('gradeSelection').classList.remove('active');
             document.getElementById('subjectSelection').classList.add('active');
         }
 
-        function selectSubject(subject) {
-            currentSubject = subject;
-            if (!subjectScores[subject]) subjectScores[subject] = 0;
-            if (!completedSets[subject]) completedSets[subject] = [];
-            updateSubjectDisplay(subject);
+        function selectSubject(s) {
+            subject = s;
+            if (!completedSets[s]) completedSets[s] = [];
+            if (!score) document.getElementById('menuBar').style.display = 'flex';
             document.getElementById('subjectSelection').classList.remove('active');
             document.getElementById('modeSelection').classList.add('active');
-            document.getElementById('menuBar').style.display = 'flex';
         }
 
-        function updateSubjectDisplay(subject) {
-            var btns = document.getElementById('subjectButtons').getElementsByClassName('selector-btn');
-            for (var i = 0; i < btns.length; i++) {
-                if (btns[i].textContent === subject) btns[i].classList.add('selected');
-                else btns[i].classList.remove('selected');
-            }
-        }
-
-        // ========== LEARNING MODE WITH 20-WORD SETS ==========
+        // ========== LEARN MODE ==========
         function startLearning() {
-            allSubjectWords = allWordsData[currentGrade][currentSubject];
-            if (!allSubjectWords || allSubjectWords.length === 0) {
-                alert('No words found!');
-                return;
-            }
-
+            var words = allData[grade][subject];
             wordSets = [];
-            for (var i = 0; i < allSubjectWords.length; i += 20) {
-                wordSets.push(allSubjectWords.slice(i, i + 20));
+            for (var i = 0; i < words.length; i += 20) {
+                wordSets.push(words.slice(i, i + 20));
             }
-
-            currentSetIndex = 0;
             document.getElementById('modeSelection').classList.remove('active');
-            document.getElementById('setSelectionSection').classList.add('active');
             renderSetButtons();
+            document.getElementById('setSelectionSection').classList.add('active');
         }
 
         function renderSetButtons() {
@@ -552,159 +448,138 @@
             for (var i = 0; i < wordSets.length; i++) {
                 var btn = document.createElement('button');
                 btn.className = 'set-btn';
-                if (completedSets[currentSubject] && completedSets[currentSubject].indexOf(i) !== -1) {
+                if (completedSets[subject] && completedSets[subject].indexOf(i) !== -1) {
                     btn.classList.add('completed');
                     btn.textContent = '✓ Set ' + (i + 1);
                 } else {
                     btn.textContent = 'Set ' + (i + 1);
                 }
-                btn.onclick = (function(setIdx) {
-                    return function() { selectSet(setIdx); };
-                })(i);
+                btn.onclick = (function(idx) { return function() { selectSet(idx); }; })(i);
                 container.appendChild(btn);
             }
         }
 
-        function selectSet(setIdx) {
-            currentSetIndex = setIdx;
-            currentLearnWords = wordSets[setIdx];
-            currentLearnIndex = 0;
+        function selectSet(idx) {
+            setIdx = idx;
+            currentWords = wordSets[idx];
+            currentIdx = 0;
             setScore = 0;
             document.getElementById('setSelectionSection').classList.remove('active');
             document.getElementById('readingSection').classList.add('active');
-            displayReadingPage();
+            displayReading();
         }
 
-        async function displayReadingPage() {
-            if (currentLearnIndex >= currentLearnWords.length) {
-                showSetCompletion();
+        async function displayReading() {
+            if (currentIdx >= currentWords.length) {
+                completeSet();
                 return;
             }
-
-            var word = currentLearnWords[currentLearnIndex];
+            var word = currentWords[currentIdx];
             document.getElementById('readingWord').textContent = word;
             document.getElementById('readingSyllables').textContent = syllabify(word);
-            document.getElementById('readingIPA').textContent = generateIPAwithSyllables(word);
+            document.getElementById('readingIPA').textContent = getIPA(word);
             document.getElementById('readingMeaning').textContent = 'Loading...';
-
-            var progress = Math.round((currentLearnIndex + 1) / currentLearnWords.length * 100);
-            document.getElementById('readingProgress').style.width = progress + '%';
-            document.getElementById('readingProgress').textContent = (currentLearnIndex + 1) + '/' + currentLearnWords.length;
-
-            var meaning = await getMeaningFromAPI(word);
+            document.getElementById('readingProgress').style.width = Math.round((currentIdx + 1) / currentWords.length * 100) + '%';
+            document.getElementById('readingProgress').textContent = (currentIdx + 1) + '/' + currentWords.length;
+            var meaning = await getMeaning(word);
             document.getElementById('readingMeaning').textContent = meaning;
-
             stopSpeaking();
-            playWordOnReading();
+            playWordReading();
         }
 
-        function previousWordReading() {
-            if (currentLearnIndex > 0) {
-                currentLearnIndex--;
-                displayReadingPage();
-            }
+        function previousWord() {
+            if (currentIdx > 0) { currentIdx--; displayReading(); }
         }
 
-        function goToPracticePage() {
+        function goToPractice() {
             stopSpeaking();
-            practiceLetters = [];
-            practiceAttempt = 0;
+            typed = [];
+            attempt = 0;
             document.getElementById('readingSection').classList.remove('active');
             document.getElementById('practiceSection').classList.add('active');
-            displayPracticePage();
+            displayPractice();
         }
 
-        function displayPracticePage() {
-            var progress = Math.round((currentLearnIndex + 1) / currentLearnWords.length * 100);
-            document.getElementById('practiceProgress').style.width = progress + '%';
-            document.getElementById('practiceProgress').textContent = (currentLearnIndex + 1) + '/' + currentLearnWords.length;
-            generatePracticeLetterButtons();
-            playWordOnPractice();
+        function displayPractice() {
+            document.getElementById('practiceProgress').style.width = Math.round((currentIdx + 1) / currentWords.length * 100) + '%';
+            document.getElementById('practiceProgress').textContent = (currentIdx + 1) + '/' + currentWords.length;
+            generatePracticeButtons();
+            playWordPractice();
         }
 
-        function generatePracticeLetterButtons() {
+        function generatePracticeButtons() {
             var container = document.getElementById('practiceLetters');
             container.innerHTML = '';
-            practiceLetters = [];
+            typed = [];
             var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             for (var i = 0; i < alphabet.length; i++) {
-                var letter = alphabet[i];
                 var btn = document.createElement('button');
                 btn.className = 'btn-letter';
-                btn.textContent = letter;
-                btn.onclick = (function(l) {
-                    return function() { selectPracticeLetter(l); };
-                })(letter);
+                btn.textContent = alphabet[i];
+                btn.onclick = (function(letter) { return function() { addLetter(letter); }; })(alphabet[i]);
                 container.appendChild(btn);
             }
             document.getElementById('practiceTyping').textContent = '_';
             document.getElementById('practiceFeedback').textContent = '';
-            practiceAttempt = 0;
+            attempt = 0;
         }
 
-        function selectPracticeLetter(letter) {
-            practiceLetters.push(letter);
-            document.getElementById('practiceTyping').textContent = practiceLetters.join('');
+        function addLetter(letter) {
+            typed.push(letter);
+            document.getElementById('practiceTyping').textContent = typed.join('');
         }
 
         function clearPractice() {
-            practiceLetters = [];
+            typed = [];
             document.getElementById('practiceTyping').textContent = '_';
             document.getElementById('practiceFeedback').textContent = '';
-            practiceAttempt = 0;
+            attempt = 0;
         }
 
         function submitPractice() {
-            var typed = practiceLetters.join('');
-            var correct = currentLearnWords[currentLearnIndex];
+            var typedStr = typed.join('').trim();
+            var correct = currentWords[currentIdx].trim();
 
-            console.log('Typed: "' + typed + '", Correct: "' + correct + '"');
-            console.log('Typed lowercase: "' + typed.toLowerCase() + '", Correct lowercase: "' + correct.toLowerCase() + '"');
+            var typedClean = cleanWord(typedStr);
+            var correctClean = cleanWord(correct);
 
-            if (typed.toLowerCase() === correct.toLowerCase()) {
+            console.log('Typed: "' + typedStr + '" → "' + typedClean + '"');
+            console.log('Correct: "' + correct + '" → "' + correctClean + '"');
+            console.log('Match: ' + (typedClean === correctClean));
+
+            if (typedClean === correctClean) {
                 document.getElementById('practiceFeedback').textContent = '✓ Correct!';
                 document.getElementById('practiceFeedback').className = 'feedback correct';
-
-                sessionScore++;
-                subjectScores[currentSubject]++;
+                score++;
                 setScore++;
-                document.getElementById('sessionScore').textContent = sessionScore;
-
+                document.getElementById('sessionScore').textContent = score;
                 setTimeout(function() {
-                    currentLearnIndex++;
+                    currentIdx++;
                     document.getElementById('practiceSection').classList.remove('active');
-                    if (currentLearnIndex < currentLearnWords.length) {
+                    if (currentIdx < currentWords.length) {
                         document.getElementById('readingSection').classList.add('active');
-                        displayReadingPage();
+                        displayReading();
                     } else {
-                        showSetCompletion();
+                        completeSet();
                     }
                 }, 1000);
             } else {
-                practiceAttempt++;
-                if (practiceAttempt === 1) {
-                    document.getElementById('practiceFeedback').textContent = '❌ Try again!';
-                    document.getElementById('practiceFeedback').className = 'feedback incorrect';
-                } else {
-                    document.getElementById('practiceFeedback').textContent = '❌ Wrong: ' + correct;
-                    document.getElementById('practiceFeedback').className = 'feedback incorrect';
-                }
+                attempt++;
+                document.getElementById('practiceFeedback').textContent = (attempt === 1) ? '❌ Try again!' : '❌ Wrong: ' + correct;
+                document.getElementById('practiceFeedback').className = 'feedback incorrect';
             }
         }
 
-        function relearningClick() {
+        function goBackToReading() {
             document.getElementById('practiceSection').classList.remove('active');
             document.getElementById('readingSection').classList.add('active');
-            displayReadingPage();
+            displayReading();
         }
 
-        function showSetCompletion() {
-            if (!completedSets[currentSubject]) completedSets[currentSubject] = [];
-            if (completedSets[currentSubject].indexOf(currentSetIndex) === -1) {
-                completedSets[currentSubject].push(currentSetIndex);
+        function completeSet() {
+            if (completedSets[subject].indexOf(setIdx) === -1) {
+                completedSets[subject].push(setIdx);
             }
-
-            document.getElementById('completionText').textContent = '🎉 Set ' + (currentSetIndex + 1) + ' Complete!';
             document.getElementById('completionScore').textContent = setScore;
             document.getElementById('readingSection').classList.remove('active');
             document.getElementById('practiceSection').classList.remove('active');
@@ -719,21 +594,14 @@
 
         // ========== TEST MODE ==========
         function startTest() {
-            allSubjectWords = allWordsData[currentGrade][currentSubject];
-            if (!allSubjectWords || allSubjectWords.length === 0) {
-                alert('No words found!');
-                return;
-            }
-
+            var words = allData[grade][subject];
             wordSets = [];
-            for (var i = 0; i < allSubjectWords.length; i += 20) {
-                wordSets.push(allSubjectWords.slice(i, i + 20));
+            for (var i = 0; i < words.length; i += 20) {
+                wordSets.push(words.slice(i, i + 20));
             }
-
-            currentTestSetIndex = 0;
             document.getElementById('modeSelection').classList.remove('active');
-            document.getElementById('testSetSelectionSection').classList.add('active');
             renderTestSetButtons();
+            document.getElementById('testSetSelectionSection').classList.add('active');
         }
 
         function renderTestSetButtons() {
@@ -743,115 +611,84 @@
                 var btn = document.createElement('button');
                 btn.className = 'set-btn';
                 btn.textContent = 'Test Set ' + (i + 1);
-                btn.onclick = (function(setIdx) {
-                    return function() { startSetTest(setIdx); };
-                })(i);
+                btn.onclick = (function(idx) { return function() { startTestSet(idx); }; })(i);
                 container.appendChild(btn);
             }
         }
 
-        function startSetTest(setIdx) {
-            currentTestSetIndex = setIdx;
-            var setWords = wordSets[setIdx];
-            testWords = getRandomElements(setWords, 10);
+        function startTestSet(idx) {
+            setIdx = idx;
+            testWords = getRandom(wordSets[idx], 10);
             startTestMode();
         }
 
         function startTestMode() {
-            if (!testWords || testWords.length === 0) {
-                alert('No words found!');
-                return;
-            }
-            currentIndex = 0;
-            testMarks = 0;
-            testCompleted = 0;
-            testTotal = testWords.length;
-
+            testIdx = 0;
+            testScore = 0;
+            document.getElementById('currentSet').textContent = (setIdx + 1);
+            document.getElementById('testMarks').textContent = '0';
+            document.getElementById('completedCount').textContent = '0';
             document.getElementById('testSetSelectionSection').classList.remove('active');
             document.getElementById('testSection').classList.add('active');
-            document.getElementById('currentTestSet').textContent = (currentTestSetIndex + 1);
-
-            document.getElementById('testMarksValue').textContent = testMarks;
-            document.getElementById('completedCount').textContent = testCompleted;
-
-            generateTestLetterButtons();
-            updateTestDisplay();
-            startTestTimer();
-            setTimeout(function() { speakTestWord(); }, 500);
+            generateTestButtons();
+            startTimer();
+            setTimeout(function() { playWordTest(); }, 500);
         }
 
-        function startTestTimer() {
-            testTimeLeft = 30;
-            if (testTimer) clearInterval(testTimer);
-            testTimer = setInterval(function() {
-                testTimeLeft--;
-                document.getElementById('testTimer').textContent = testTimeLeft;
-                if (testTimeLeft <= 0) {
-                    clearInterval(testTimer);
-                    moveToNextTestWord();
-                }
-            }, 1000);
-        }
-
-        function generateTestLetterButtons() {
+        function generateTestButtons() {
             var container = document.getElementById('testLetters');
             container.innerHTML = '';
-            currentLetters = [];
+            testTyped = [];
             var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             for (var i = 0; i < alphabet.length; i++) {
-                var letter = alphabet[i];
                 var btn = document.createElement('button');
                 btn.className = 'btn-letter';
-                btn.textContent = letter;
-                btn.onclick = (function(l) {
-                    return function() { selectTestLetter(l); };
-                })(letter);
+                btn.textContent = alphabet[i];
+                btn.onclick = (function(letter) { return function() { addTestLetter(letter); }; })(alphabet[i]);
                 container.appendChild(btn);
             }
             document.getElementById('testTyping').textContent = '_';
             document.getElementById('testPlayLettersBtn').style.display = 'none';
             document.getElementById('testFeedback').textContent = '';
-            testIsWrongAttempt = false;
+            wrongAttempt = false;
         }
 
-        function selectTestLetter(letter) {
-            currentLetters.push(letter);
-            document.getElementById('testTyping').textContent = currentLetters.join('');
+        function addTestLetter(letter) {
+            testTyped.push(letter);
+            document.getElementById('testTyping').textContent = testTyped.join('');
         }
 
         function clearTest() {
-            currentLetters = [];
+            testTyped = [];
             document.getElementById('testTyping').textContent = '_';
         }
 
         function submitTest() {
-            if (testIsAutoAdvancing) return;
-            var typed = currentLetters.join('');
-            var correct = testWords[currentIndex];
+            if (autoAdv) return;
+            var typedStr = testTyped.join('').trim();
+            var correct = testWords[testIdx].trim();
 
-            if (typed.toLowerCase() === correct.toLowerCase()) {
-                var feedbackEl = document.getElementById('testFeedback');
-                feedbackEl.textContent = '+1 Point!';
-                feedbackEl.className = 'feedback correct';
+            var typedClean = cleanWord(typedStr);
+            var correctClean = cleanWord(correct);
 
-                testMarks++;
-                testCompleted++;
-                sessionScore++;
-
-                document.getElementById('testMarksValue').textContent = testMarks;
-                document.getElementById('completedCount').textContent = testCompleted;
-                document.getElementById('sessionScore').textContent = sessionScore;
-
-                testIsAutoAdvancing = true;
+            if (typedClean === correctClean) {
+                document.getElementById('testFeedback').textContent = '+1 Point!';
+                document.getElementById('testFeedback').className = 'feedback correct';
+                testScore++;
+                score++;
+                document.getElementById('testMarks').textContent = testScore;
+                document.getElementById('sessionScore').textContent = score;
+                document.getElementById('completedCount').textContent = (parseInt(document.getElementById('completedCount').textContent) + 1);
+                autoAdv = true;
                 stopSpeaking();
                 clearInterval(testTimer);
                 setTimeout(function() {
-                    testIsAutoAdvancing = false;
-                    moveToNextTestWord();
+                    autoAdv = false;
+                    nextTestWord();
                 }, 1000);
             } else {
-                if (!testIsWrongAttempt) {
-                    testIsWrongAttempt = true;
+                if (!wrongAttempt) {
+                    wrongAttempt = true;
                     document.getElementById('testFeedback').textContent = '❌ Incorrect. Try again or use Play Letters.';
                     document.getElementById('testFeedback').className = 'feedback incorrect';
                     document.getElementById('testPlayLettersBtn').style.display = 'inline-block';
@@ -865,39 +702,45 @@
         function skipTest() {
             document.getElementById('testFeedback').textContent = 'Skipped';
             document.getElementById('testFeedback').className = 'feedback incorrect';
-            setTimeout(function() { moveToNextTestWord(); }, 1500);
+            setTimeout(function() { nextTestWord(); }, 1500);
         }
 
-        function moveToNextTestWord() {
+        function nextTestWord() {
             stopSpeaking();
-            currentIndex++;
-            if (currentIndex >= testWords.length) {
+            testIdx++;
+            if (testIdx >= testWords.length) {
                 endTest();
             } else {
                 clearTest();
-                generateTestLetterButtons();
-                updateTestDisplay();
-                startTestTimer();
-                setTimeout(function() { speakTestWord(); }, 500);
+                generateTestButtons();
+                document.getElementById('testProgress').style.width = Math.round(testIdx / testWords.length * 100) + '%';
+                document.getElementById('testProgress').textContent = testIdx + '/' + testWords.length;
+                startTimer();
+                setTimeout(function() { playWordTest(); }, 500);
             }
         }
 
-        function updateTestDisplay() {
-            var progress = Math.round(currentIndex / testWords.length * 100);
-            document.getElementById('testProgress').style.width = progress + '%';
-            document.getElementById('testProgress').textContent = currentIndex + '/' + testWords.length;
+        function startTimer() {
+            timeLeft = 30;
+            if (testTimer) clearInterval(testTimer);
+            testTimer = setInterval(function() {
+                timeLeft--;
+                document.getElementById('testTimer').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(testTimer);
+                    nextTestWord();
+                }
+            }, 1000);
         }
 
         function endTest() {
             clearInterval(testTimer);
             stopSpeaking();
-            var percentage = Math.round(testMarks / testTotal * 100);
+            var percent = Math.round(testScore / testWords.length * 100);
             document.getElementById('testCompletionText').innerHTML = 
-                '<p style="font-size: 1.5em; margin: 20px 0;">Set ' + (currentTestSetIndex + 1) + ' Test Complete!</p>' +
-                '<p style="font-size: 1.5em; margin: 20px 0;">Completed: ' + testCompleted + ' words</p>' +
-                '<p style="font-size: 1.8em; margin: 20px 0;">Marks: ' + testMarks + ' / ' + testTotal + '</p>' +
-                '<p style="font-size: 1.5em;">Score: ' + percentage + '%</p>';
-
+                '<p>Set ' + (setIdx + 1) + ' Test Complete!</p>' +
+                '<p style="margin-top: 15px;">Marks: ' + testScore + ' / ' + testWords.length + '</p>' +
+                '<p>Score: ' + percent + '%</p>';
             document.getElementById('testSection').classList.remove('active');
             document.getElementById('testCompletionSection').classList.add('active');
         }
@@ -907,29 +750,19 @@
             document.getElementById('testSetSelectionSection').classList.add('active');
         }
 
-        // ========== NAVIGATION ==========
+        // ========== HOME ==========
         function goHome() {
             stopSpeaking();
             if (testTimer) clearInterval(testTimer);
             document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
             document.getElementById('gradeSelection').classList.add('active');
             document.getElementById('menuBar').style.display = 'none';
-            currentGrade = '';
-            currentSubject = '';
-            renderGradeButtons();
+            grade = '';
+            subject = '';
+            renderGrades();
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                if (!window.cordova) {
-                    initializeApp();
-                }
-            });
-        } else {
-            if (!window.cordova) {
-                initializeApp();
-            }
-        }
+        if (!window.cordova) initializeApp();
     </script>
 </body>
 </html>
