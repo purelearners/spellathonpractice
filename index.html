@@ -2,38 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spellathon Master v6.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Spellathon Master v6.1</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow-x: hidden; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
         .container {
-            max-width: 1000px;
+            max-width: 100%;
+            width: 100%;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 15px;
             text-align: center;
+            flex-shrink: 0;
         }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header h1 { font-size: 1.8em; margin-bottom: 5px; }
+        .header p { font-size: 0.9em; }
         .breadcrumb {
-            padding: 15px 30px;
+            padding: 10px 15px;
             background: #f8f9fa;
             border-bottom: 2px solid #ddd;
-            font-size: 0.95em;
+            font-size: 0.85em;
             color: #555;
             display: none;
+            overflow-x: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .breadcrumb.active { display: block; }
         .breadcrumb span { font-weight: 600; color: #667eea; }
@@ -41,148 +51,267 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
+            padding: 10px 15px;
             background: #f8f9fa;
             border-bottom: 2px solid #ddd;
+            gap: 10px;
+            flex-shrink: 0;
         }
-        .btn-nav { padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-right: 10px; }
+        .btn-nav { padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; }
         .btn-back { background: #6c757d; }
-        .score-display { padding: 8px 15px; background: #e0e7ff; color: #667eea; border-radius: 6px; font-weight: 600; }
-        .main-content { padding: 40px; }
+        .score-display { padding: 6px 12px; background: #e0e7ff; color: #667eea; border-radius: 6px; font-weight: 600; font-size: 0.85em; }
+        .main-content { 
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
         .section { display: none; }
         .section.active { display: block; }
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; margin: 5px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 8px; font-size: 0.95em; font-weight: 600; cursor: pointer; transition: all 0.3s; margin: 4px; }
         .btn-success { background: #10b981; color: white; }
         .btn-secondary { background: #f0f0f0; color: #333; }
-        .btn-danger { background: #ef4444; color: white; }
         .btn-stop { background: #ff6b6b; color: white; }
-        .btn-letter { padding: 15px; margin: 3px; background: #667eea; color: white; border: 2px solid #667eea; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; min-width: 50px; }
+        .btn-letter { 
+            padding: 10px 8px;
+            margin: 2px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 35px;
+            flex: 0 0 auto;
+        }
         .btn-letter:hover { transform: scale(1.05); }
-        .btn-backspace { background: #dc3545; border-color: #dc3545; min-width: 80px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
-        .card { padding: 25px; border: 3px solid #ddd; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .btn-backspace { 
+            background: #dc3545;
+            border-color: #dc3545;
+            min-width: auto;
+            padding: 10px 15px;
+            font-size: 0.85em;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .card { padding: 20px; border: 3px solid #ddd; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; }
         .card:hover { transform: scale(1.02); border-color: #667eea; }
-        .card h3 { color: #667eea; margin-bottom: 10px; font-size: 1.5em; }
-        .progress-bar { width: 100%; height: 30px; background: #f0f0f0; border-radius: 15px; overflow: hidden; margin-bottom: 20px; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.5s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9em; }
-        .word-display { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 15px; margin-bottom: 20px; }
-        .word-main { font-size: 3.5em; font-weight: bold; color: #667eea; margin-bottom: 15px; }
-        .word-syllables { font-size: 2em; color: #764ba2; margin-bottom: 15px; font-weight: 600; }
-        .word-ipa { font-size: 1.6em; color: #555; margin-bottom: 15px; font-style: italic; }
-        .word-meaning { font-size: 1.1em; color: #333; margin-bottom: 15px; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 8px; text-align: left; }
-        .button-group { text-align: center; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-        .grid-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .selector-btn { padding: 15px 20px; background: #f0f0f0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; }
+        .card h3 { color: #667eea; margin-bottom: 8px; font-size: 1.3em; }
+        .card p { font-size: 0.9em; }
+        .progress-bar { width: 100%; height: 25px; background: #f0f0f0; border-radius: 15px; overflow: hidden; margin-bottom: 15px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.5s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75em; }
+        .word-display { text-align: center; padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px; margin-bottom: 15px; }
+        .word-main { font-size: 2.5em; font-weight: bold; color: #667eea; margin-bottom: 10px; word-break: break-word; }
+        .word-syllables { font-size: 1.4em; color: #764ba2; margin-bottom: 10px; font-weight: 600; word-break: break-word; }
+        .word-ipa { font-size: 1.2em; color: #555; margin-bottom: 10px; font-style: italic; word-break: break-word; }
+        .word-meaning { font-size: 0.95em; color: #333; margin-bottom: 10px; background: rgba(255,255,255,0.9); padding: 12px; border-radius: 8px; text-align: left; max-height: 150px; overflow-y: auto; }
+        .button-group { text-align: center; margin-bottom: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+        .grid-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+        .selector-btn { 
+            padding: 12px 15px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            word-break: break-word;
+        }
         .selector-btn:hover { background: #e0e0e0; }
         .selector-btn.selected { background: #667eea; color: white; border-color: #667eea; }
-        .loading { text-align: center; padding: 40px; }
-        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .loading { text-align: center; padding: 30px; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 15px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .completion { text-align: center; padding: 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 15px; margin: 20px 0; }
-        .completion h2 { font-size: 2.5em; margin-bottom: 15px; }
-        .selected-letters { text-align: center; font-size: 2.5em; font-weight: bold; color: #667eea; margin-bottom: 20px; padding: 20px; background: #f0f0f0; border-radius: 10px; min-height: 60px; letter-spacing: 8px; font-family: 'Courier New'; }
-        .keyboard { display: flex; flex-direction: column; gap: 5px; padding: 20px; background: #f9f9f9; border-radius: 15px; }
-        .keyboard-row { display: flex; justify-content: center; gap: 5px; }
-        .feedback { text-align: center; margin: 20px 0; font-size: 1.3em; font-weight: bold; min-height: 30px; }
+        .completion { text-align: center; padding: 30px 15px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; margin: 15px 0; }
+        .completion h2 { font-size: 1.8em; margin-bottom: 10px; }
+        .completion p { font-size: 1.1em; }
+        .selected-letters { 
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            min-height: 50px;
+            letter-spacing: 5px;
+            font-family: 'Courier New';
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+        .feedback { text-align: center; margin: 15px 0; font-size: 1.2em; font-weight: bold; min-height: 30px; }
         .feedback.correct { color: #10b981; }
         .feedback.incorrect { color: #ef4444; }
-        .marks { font-size: 1.3em; color: #667eea; font-weight: bold; text-align: center; margin-bottom: 15px; padding: 10px; background: #e0e7ff; border-radius: 10px; }
-        .timer { font-size: 2.5em; color: #ef4444; font-weight: bold; text-align: center; margin-bottom: 20px; padding: 20px; background: #fff3cd; border-radius: 10px; border: 2px solid #ef4444; }
-        .sets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin: 20px 0; }
-        .set-btn { padding: 15px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: 600; background: #f0f0f0; }
+        .marks { font-size: 0.95em; color: #667eea; font-weight: bold; text-align: center; margin-bottom: 10px; padding: 10px; background: #e0e7ff; border-radius: 8px; }
+        .timer { font-size: 2em; color: #ef4444; font-weight: bold; text-align: center; margin-bottom: 10px; padding: 15px; background: #fff3cd; border-radius: 10px; border: 2px solid #ef4444; }
+        .sets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin: 15px 0; }
+        .set-btn { 
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            background: #f0f0f0;
+            font-size: 0.85em;
+            word-break: break-word;
+        }
         .set-btn.completed { background: #10b981; color: white; border-color: #10b981; }
-        .page-title { font-size: 1.5em; color: #667eea; font-weight: bold; margin-bottom: 20px; text-align: center; }
-        .word-list { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; max-height: 400px; overflow-y: auto; }
-        .word-list h3 { color: #667eea; margin-bottom: 15px; }
-        .word-list-item { padding: 10px; background: white; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid #667eea; }
+        .page-title { font-size: 1.3em; color: #667eea; font-weight: bold; margin-bottom: 15px; text-align: center; }
+        .word-list { 
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .word-list h3 { color: #667eea; margin-bottom: 10px; font-size: 0.95em; }
+        .word-list-item { 
+            padding: 8px;
+            background: white;
+            margin-bottom: 4px;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+            font-size: 0.9em;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .header { padding: 12px; }
+            .header h1 { font-size: 1.5em; margin-bottom: 3px; }
+            .header p { font-size: 0.8em; }
+            .menu-bar { padding: 8px 10px; }
+            .btn-nav { padding: 5px 10px; font-size: 0.8em; }
+            .main-content { padding: 10px; }
+            .word-main { font-size: 2em; }
+            .word-syllables { font-size: 1.2em; }
+            .btn-letter { 
+                padding: 8px 6px;
+                font-size: 0.75em;
+                min-width: 30px;
+            }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-cols { grid-template-columns: 1fr; }
+            .selected-letters { font-size: 1.6em; letter-spacing: 3px; }
+            .timer { font-size: 1.5em; }
+        }
+
+        @media (max-width: 400px) {
+            .header h1 { font-size: 1.3em; }
+            .btn-letter { 
+                padding: 6px 4px;
+                font-size: 0.7em;
+                min-width: 28px;
+            }
+            .word-main { font-size: 1.8em; }
+            .selected-letters { font-size: 1.4em; }
+            .word-meaning { font-size: 0.85em; padding: 8px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Spellathon Master v6.0</h1>
-            <p>Enhanced Learning Experience</p>
+            <h1>Spellathon</h1>
+            <p>Learn • Practice • Test</p>
         </div>
         
         <div class="breadcrumb" id="breadcrumb"></div>
         
         <div class="menu-bar" id="menuBar" style="display: none;">
-            <div>
+            <div style="display: flex; gap: 5px;">
                 <button class="btn-nav btn-back" onclick="goBack()">← Back</button>
-                <button class="btn-nav" onclick="goHome()">🏠 Home</button>
+                <button class="btn-nav" onclick="goHome()">Home</button>
             </div>
-            <div class="score-display">Score: <span id="sessionScore">0</span> words</div>
+            <div class="score-display">Score: <span id="sessionScore">0</span></div>
         </div>
         
         <div class="main-content">
             <div class="section active" id="loadingSection">
                 <div class="loading">
-                    <p>Loading words from Google Sheets...</p>
+                    <p>Loading...</p>
                     <div class="loading-spinner"></div>
                 </div>
             </div>
             
             <div class="section" id="gradeSelection">
-                <h2 style="margin-bottom: 20px;">Select Grade</h2>
+                <h2 style="margin-bottom: 15px;">Select Grade</h2>
                 <div class="grid-cols" id="gradeButtons"></div>
             </div>
             
             <div class="section" id="subjectSelection">
-                <h2 style="margin-bottom: 20px;">Select Subject</h2>
+                <h2 style="margin-bottom: 15px;">Select Subject</h2>
                 <div class="grid-cols" id="subjectButtons"></div>
             </div>
             
             <div class="section" id="modeSelection">
-                <h2 style="text-align: center; margin-bottom: 30px;">Select Mode</h2>
+                <h2 style="text-align: center; margin-bottom: 20px;">Select Mode</h2>
                 <div class="grid-2">
                     <div class="card" onclick="startLearning()">
-                        <h3>📚 Learn & Practice</h3>
-                        <p>Learn words then practice typing</p>
+                        <h3>📚</h3>
+                        <p>Learn & Practice</p>
                     </div>
                     <div class="card" onclick="startTest()">
-                        <h3>🧪 Test Yourself</h3>
-                        <p>10 random words per set test</p>
+                        <h3>🧪</h3>
+                        <p>Test</p>
                     </div>
                 </div>
             </div>
             
             <div class="section" id="setSelectionSection">
-                <h2 style="margin-bottom: 20px;">Select Set to Learn</h2>
+                <h2 style="margin-bottom: 15px;">Select Set</h2>
                 <div class="sets-grid" id="setsGrid"></div>
             </div>
             
             <div class="section" id="readingSection">
-                <div class="page-title">📖 Reading Page</div>
+                <div class="page-title">📖 Learn</div>
                 <div class="progress-bar"><div class="progress-fill" id="readingProgress">0%</div></div>
                 <div class="word-display">
                     <div class="word-main" id="readingWord">Word</div>
-                    <div class="word-syllables" id="readingSyllables">Syl-la-bles</div>
-                    <div class="word-ipa" id="readingIPA">/word/</div>
+                    <div class="word-syllables" id="readingSyllables">Syl</div>
+                    <div class="word-ipa" id="readingIPA">/w/</div>
                     <div class="button-group">
-                        <button class="btn btn-success" onclick="playWordReading()">🔊 Play Word</button>
-                        <button class="btn btn-secondary" onclick="playLettersReading()">🔊 Play Letters</button>
-                        <button class="btn btn-secondary" onclick="playSyllablesReading()">🔊 Play Syllables</button>
+                        <button class="btn btn-success" onclick="playWordReading()">🔊 Word</button>
+                        <button class="btn btn-secondary" onclick="playLettersReading()">🔊 Letters</button>
+                        <button class="btn btn-secondary" onclick="playSyllablesReading()">🔊 Syl</button>
                         <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                     </div>
                     <div class="word-meaning" id="readingMeaning">Loading...</div>
                     <div class="button-group">
-                        <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
-                        <button class="btn btn-success" onclick="goToPractice()">Next → Practice</button>
+                        <button class="btn btn-secondary" onclick="previousWord()">← Prev</button>
+                        <button class="btn btn-success" onclick="goToPractice()">Next →</button>
                     </div>
                 </div>
             </div>
             
             <div class="section" id="practiceSection">
-                <div class="page-title">✏️ Practice Page</div>
+                <div class="page-title">✏️ Practice</div>
                 <div class="progress-bar"><div class="progress-fill" id="practiceProgress">0%</div></div>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <button class="btn btn-success" onclick="playWordPractice()">🔊 Play Word</button>
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <button class="btn btn-success" onclick="playWordPractice()">🔊 Word</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
                 <div class="selected-letters" id="practiceTyping">_</div>
                 <div class="keyboard" id="practiceKeyboard"></div>
                 <div class="feedback" id="practiceFeedback"></div>
-                <div style="text-align: center; margin-top: 20px;">
+                <div style="text-align: center;">
                     <button class="btn btn-secondary" onclick="clearPractice()">Clear</button>
                     <button class="btn btn-success" onclick="submitPractice()">Submit</button>
                     <button class="btn btn-secondary" onclick="goBackToReading()">Relearn</button>
@@ -191,40 +320,36 @@
             
             <div class="section" id="completionSection">
                 <div class="completion">
-                    <h2>🎉 Set Complete!</h2>
-                    <p>Set Score: <span id="completionScore">0</span> words</p>
-                    <div style="margin-top: 30px;">
-                        <button class="btn btn-success" onclick="goBackToSets()">Continue</button>
-                    </div>
+                    <h2>🎉 Complete!</h2>
+                    <p>Score: <span id="completionScore">0</span></p>
+                    <button class="btn btn-success" onclick="goBackToSets()" style="margin-top: 15px;">Continue</button>
                 </div>
             </div>
             
             <div class="section" id="testSetSelectionSection">
-                <h2 style="margin-bottom: 20px;">Select Set to Test</h2>
+                <h2 style="margin-bottom: 15px;">Select Set</h2>
                 <div class="sets-grid" id="testSetsGrid"></div>
             </div>
             
             <div class="section" id="testWordListSection">
-                <div class="page-title">📝 Test Word List - Review Before Starting</div>
+                <div class="page-title">📝 Words in Test</div>
                 <div class="word-list" id="testWordList"></div>
-                <div style="text-align: center;">
-                    <button class="btn btn-success" onclick="startTestFromList()" style="font-size: 1.2em;">Start Test</button>
-                </div>
+                <button class="btn btn-success" onclick="startTestFromList()" style="width: 100%; font-size: 1em;">Start Test</button>
             </div>
             
             <div class="section" id="testSection">
-                <div class="marks">Word: <span id="completedCount">0</span>/10 | Marks: <span id="testMarks">0</span>/10 | Set: <span id="currentSet">1</span></div>
+                <div class="marks">Q: <span id="completedCount">0</span>/10 | Mark: <span id="testMarks">0</span>/10</div>
                 <div class="timer" id="testTimer">30</div>
                 <div class="progress-bar"><div class="progress-fill" id="testProgress">0%</div></div>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <button class="btn btn-success" onclick="playWordTest()">🔊 Play Word</button>
-                    <button class="btn btn-secondary" id="testPlayLettersBtn" onclick="playLettersTest()" style="display: none;">🔊 Play Letters</button>
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <button class="btn btn-success" onclick="playWordTest()">🔊 Word</button>
+                    <button class="btn btn-secondary" id="testPlayLettersBtn" onclick="playLettersTest()" style="display: none;">🔊 Letters</button>
                     <button class="btn btn-stop" onclick="stopSpeaking()">Stop</button>
                 </div>
                 <div class="selected-letters" id="testTyping">_</div>
                 <div class="keyboard" id="testKeyboard"></div>
                 <div class="feedback" id="testFeedback"></div>
-                <div style="text-align: center; margin-top: 20px;">
+                <div style="text-align: center;">
                     <button class="btn btn-secondary" onclick="clearTest()">Clear</button>
                     <button class="btn btn-success" onclick="submitTest()">Submit</button>
                     <button class="btn btn-secondary" onclick="skipTest()">Skip</button>
@@ -233,11 +358,9 @@
             
             <div class="section" id="testCompletionSection">
                 <div class="completion">
-                    <h2>🎊 Test Complete!</h2>
-                    <p id="testCompletionText">Great job!</p>
-                    <div style="margin-top: 30px;">
-                        <button class="btn btn-success" onclick="goBackToTestSets()">Back to Sets</button>
-                    </div>
+                    <h2>🎊 Done!</h2>
+                    <p id="testCompletionText">Marks: 0/10</p>
+                    <button class="btn btn-success" onclick="goBackToTestSets()" style="margin-top: 15px;">Back</button>
                 </div>
             </div>
         </div>
@@ -245,14 +368,12 @@
 
     <script>
         var SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRh5GoW3bvEFhA9qODh5k6FJCFD-A4a_Fu4nb3irpPgWng6kyFlJ3m3Lrr-ZHFYo5thtEMeUJ8mVsqH/pub?output=csv';
-        
         var allData = {}, grade = '', subject = '', currentWords = [], currentIdx = 0;
         var wordSets = [], setIdx = 0, testWords = [], testIdx = 0;
         var score = 0, setScore = 0, testScore = 0, typed = [], testTyped = [];
         var attempt = 0, testTimer = null, timeLeft = 30, autoAdv = false, wrongAttempt = false;
         var completedSets = {}, pageHistory = [];
 
-        // QWERTY Layout
         var QWERTY = [
             ['Q','W','E','R','T','Y','U','I','O','P'],
             ['A','S','D','F','G','H','J','K','L'],
@@ -388,7 +509,7 @@
                 btn.className = 'set-btn';
                 if (completedSets[subject] && completedSets[subject].indexOf(i) !== -1) {
                     btn.classList.add('completed');
-                    btn.textContent = '✓ Set ' + (i + 1);
+                    btn.textContent = '✓ ' + (i + 1);
                 } else {
                     btn.textContent = 'Set ' + (i + 1);
                 }
@@ -455,9 +576,7 @@
                     var btn = document.createElement('button');
                     btn.className = 'btn-letter';
                     btn.textContent = QWERTY[r][c];
-                    btn.onclick = (function(letter) { 
-                        return function() { clickHandler(letter); }; 
-                    })(QWERTY[r][c]);
+                    btn.onclick = (function(letter) { return function() { clickHandler(letter); }; })(QWERTY[r][c]);
                     row.appendChild(btn);
                 }
                 container.appendChild(row);
@@ -466,7 +585,7 @@
             backRow.className = 'keyboard-row';
             var backBtn = document.createElement('button');
             backBtn.className = 'btn-letter btn-backspace';
-            backBtn.textContent = '⌫ Backspace';
+            backBtn.textContent = '⌫';
             backBtn.onclick = function() { 
                 if (containerId === 'practiceKeyboard') backspacePractice();
                 else backspaceTest();
@@ -518,7 +637,7 @@
                 }, 1000);
             } else {
                 attempt++;
-                document.getElementById('practiceFeedback').textContent = (attempt === 1) ? '❌ Try again!' : '❌ Wrong: ' + correct;
+                document.getElementById('practiceFeedback').textContent = (attempt === 1) ? '❌ Try!' : '❌ Wrong: ' + correct;
                 document.getElementById('practiceFeedback').className = 'feedback incorrect';
             }
         }
@@ -559,7 +678,7 @@
             for (var i = 0; i < wordSets.length; i++) {
                 var btn = document.createElement('button');
                 btn.className = 'set-btn';
-                btn.textContent = 'Test Set ' + (i + 1);
+                btn.textContent = 'Set ' + (i + 1);
                 btn.onclick = (function(idx) { return function() { showTestWordList(idx); }; })(i);
                 container.appendChild(btn);
             }
@@ -569,7 +688,7 @@
             setIdx = idx;
             testWords = getRandom(wordSets[idx], 10);
             var container = document.getElementById('testWordList');
-            container.innerHTML = '<h3>Words in This Test (10 Random from Set ' + (idx + 1) + '):</h3>';
+            container.innerHTML = '<h3>10 Words in Set ' + (idx + 1) + ':</h3>';
             for (var i = 0; i < testWords.length; i++) {
                 var item = document.createElement('div');
                 item.className = 'word-list-item';
@@ -582,9 +701,6 @@
         function startTestFromList() {
             testIdx = 0;
             testScore = 0;
-            document.getElementById('currentSet').textContent = (setIdx + 1);
-            document.getElementById('testMarks').textContent = '0';
-            document.getElementById('completedCount').textContent = '0';
             navigateTo('testSection');
             generateKeyboard('testKeyboard', addTestLetter);
             startTimer();
@@ -616,7 +732,7 @@
             var correctClean = cleanWord(correct);
             
             if (typedClean === correctClean) {
-                document.getElementById('testFeedback').textContent = '+1 Point!';
+                document.getElementById('testFeedback').textContent = '+1!';
                 document.getElementById('testFeedback').className = 'feedback correct';
                 testScore++;
                 score++;
@@ -633,11 +749,11 @@
             } else {
                 if (!wrongAttempt) {
                     wrongAttempt = true;
-                    document.getElementById('testFeedback').textContent = '❌ Try again!';
+                    document.getElementById('testFeedback').textContent = '❌ Try!';
                     document.getElementById('testFeedback').className = 'feedback incorrect';
                     document.getElementById('testPlayLettersBtn').style.display = 'inline-block';
                 } else {
-                    document.getElementById('testFeedback').textContent = '❌ Wrong: ' + correct;
+                    document.getElementById('testFeedback').textContent = '❌ ' + correct;
                     document.getElementById('testFeedback').className = 'feedback incorrect';
                 }
             }
@@ -683,7 +799,7 @@
             stopSpeaking();
             var percent = Math.round(testScore / testWords.length * 100);
             document.getElementById('testCompletionText').innerHTML = 
-                '<p>Marks: ' + testScore + '/10</p><p>Score: ' + percent + '%</p>';
+                '<p>Marks: ' + testScore + '/10</p><p>Percent: ' + percent + '%</p>';
             navigateTo('testCompletionSection');
         }
 
